@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloonery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Baloo+2:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FDEAF1;
+    --cream-2:#FDF3F8;
+    --blue-bg:#FBE2ED;
+    --card:#FFFFFF;
+    --ink:#4A2E3A;
+    --ink-muted:#8A6B78;
+    --ink-faint:#C79FB3;
+    --line:#F6D9E7;
+    --line-blue:#F3D6E6;
+    --accent:#EC6FA6;
+    --accent-dark:#D65790;
+    --accent-deep:#5C1B3B;
+    --danger:#C0405A;
+    --radius:14px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream-2);
+    color:var(--ink);
+    font-family:'Poppins',-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-weight:300;
+  }
+  h1{font-family:'Baloo 2',sans-serif;font-weight:800;margin:0;text-transform:uppercase;letter-spacing:-.01em;}
+  h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:600;margin:0;}
+  a{color:inherit;}
+  .italic-accent{font-style:normal;color:var(--accent);}
+
+  /* Nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(253,234,241,.85);backdrop-filter:blur(8px);}
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 48px;max-width:1200px;margin:0 auto;
+  }
+  .brand{display:flex;align-items:center;gap:10px;cursor:pointer;border-radius:8px;padding:4px 6px;margin:-4px -6px;transition:background .2s var(--ease);}
+  .brand:hover{background:rgba(236,111,166,.12);}
+  .brand svg{flex:none;}
+  .brand-text{line-height:1.05;}
+  .brand-name{font-family:'Baloo 2',sans-serif;font-size:23px;color:var(--accent-deep);font-weight:800;letter-spacing:.01em;}
+  .brand-sub{font-size:8.5px;letter-spacing:.18em;color:var(--ink-muted);text-transform:uppercase;margin-top:1px;}
+  .nav-links{display:flex;align-items:center;gap:32px;font-size:12.5px;}
+  .nav-links a{position:relative;text-decoration:none;color:var(--accent-deep);letter-spacing:.06em;text-transform:uppercase;font-weight:500;transition:color .2s var(--ease);}
+  .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:1.5px;background:var(--accent);transition:right .25s var(--ease);}
+  .nav-links a:hover{color:var(--accent);}
+  .nav-links a:hover::after{right:0;}
+
+  .admin-banner{background:var(--accent-deep);color:#fff;text-align:center;font-size:12px;letter-spacing:.03em;padding:9px;display:none;}
+  .admin-banner.show{display:block;}
+  .admin-banner button{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:4px;padding:2px 10px;margin-left:14px;font-size:11px;cursor:pointer;}
+
+  .btn{
+    background:var(--accent-deep);color:#fff;border:none;border-radius:999px;text-decoration:none;
+    padding:13px 26px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+    font-family:'Poppins',sans-serif;font-weight:500;transition:background .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease);
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn:hover{background:#431429;transform:translateY(-2px);box-shadow:0 10px 20px -8px rgba(92,27,59,.45);}
+  .btn:active{transform:translateY(0);box-shadow:none;}
+  .btn.outline{background:transparent;border:1.5px solid var(--accent-deep);color:var(--accent-deep);}
+  .btn.outline:hover{background:var(--accent-deep);color:#fff;}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink-muted);border-radius:6px;padding:8px 14px;text-transform:none;letter-spacing:0;}
+  .btn.ghost:hover{background:var(--cream);border-color:var(--ink-faint);color:var(--ink);transform:none;box-shadow:none;}
+  .btn.danger{background:var(--danger);}
+  .btn.small{padding:8px 16px;font-size:11px;}
+
+  /* Hero */
+  .hero{position:relative;overflow:hidden;background:var(--cream);min-height:600px;display:flex;align-items:center;}
+  .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .hero-overlay{
+    position:absolute;inset:0;z-index:1;
+    background:linear-gradient(100deg, rgba(253,234,241,.95) 0%, rgba(253,234,241,.74) 40%, rgba(253,234,241,.34) 72%, rgba(253,234,241,.16) 100%);
+  }
+  .hero-video-toggle{
+    position:absolute;right:26px;bottom:26px;z-index:3;width:38px;height:38px;border-radius:50%;
+    background:rgba(92,27,59,.55);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(4px);transition:background .2s var(--ease);
+  }
+  .hero-video-toggle:hover{background:rgba(92,27,59,.85);}
+  .hero-inner{
+    position:relative;z-index:2;width:100%;
+    max-width:1200px;margin:0 auto;padding:60px 48px 90px;
+    display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center;
+  }
+  .hero-left h1{font-size:clamp(30px,5vw,48px);line-height:1.15;margin-bottom:20px;}
+  .hero-left p{color:var(--ink-muted);font-size:14.5px;line-height:1.75;max-width:400px;margin-bottom:30px;}
+  .hero-rule{width:46px;height:3px;border-radius:2px;background:var(--accent);margin-bottom:22px;}
+
+  .hero-right{position:relative;max-width:260px;justify-self:end;}
+  .hero-image-well{
+    aspect-ratio:1/1;border-radius:50% / 46%;overflow:hidden;position:relative;
+    background:linear-gradient(150deg,var(--blue-bg),var(--cream));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 22px 45px -18px rgba(92,27,59,.4);border:4px solid #fff;
+  }
+  .hero-image-well img{width:100%;height:100%;object-fit:cover;}
+  .hero-placeholder{color:var(--accent-deep);opacity:.5;text-align:center;font-size:12px;letter-spacing:.05em;}
+  .hero-upload-btn{position:absolute;bottom:14px;left:0;right:0;margin:0 auto;width:fit-content;}
+  .portrait-upload-btn{position:absolute;bottom:14px;left:0;right:0;margin:0 auto;width:fit-content;}
+
+  section{padding:80px 48px;}
+  .section-inner{max-width:1200px;margin:0 auto;}
+  .section-head{max-width:520px;margin:0 auto 46px;text-align:center;}
+  .flourish-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;}
+  .flourish-line{width:28px;height:1px;background:var(--accent);}
+  .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);text-transform:uppercase;font-weight:600;}
+  .section-head h2{font-size:clamp(26px,4vw,34px);margin-bottom:8px;color:var(--accent-deep);}
+  .section-head p{color:var(--ink-muted);font-size:13.5px;}
+
+  /* About */
+  #about{background:var(--cream-2);}
+  #about .about-grid{display:grid;grid-template-columns:.7fr 1.3fr;gap:52px;align-items:center;max-width:960px;margin:0 auto;}
+  .about-portrait{
+    aspect-ratio:4/5;border-radius:var(--radius);position:relative;overflow:hidden;
+    background:linear-gradient(160deg,var(--blue-bg),var(--card));
+    display:flex;align-items:center;justify-content:center;color:var(--accent-deep);opacity:.85;
+    border:1px solid var(--line-blue);
+  }
+  .about-portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .portrait-image-well{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .portrait-image-well svg{width:100%;height:100%;max-width:150px;}
+  .about-text{color:var(--ink-muted);font-size:14.5px;line-height:1.85;white-space:pre-wrap;}
+  .about-edit-area{width:100%;min-height:180px;font-family:inherit;font-size:14px;line-height:1.7;
+    padding:14px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);}
+  .edit-controls{margin-top:14px;display:flex;gap:8px;}
+
+  /* Gallery */
+  #gallery{background:var(--blue-bg);}
+  .gallery-toolbar{
+    max-width:1000px;margin:0 auto 24px;display:none;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;
+    background:var(--card);border:1px solid var(--line-blue);border-radius:12px;padding:16px 18px;
+  }
+  .gallery-toolbar.show{display:flex;}
+  .gallery-toolbar select, .gallery-toolbar input[type=text]{
+    padding:9px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit;background:#fff;
+  }
+  .toolbar-label{font-size:11px;color:var(--ink-faint);letter-spacing:.05em;text-transform:uppercase;}
+
+  .filter-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:1000px;margin:0 auto 34px;}
+  .pill{
+    padding:8px 18px;border-radius:999px;border:1px solid var(--accent-deep);
+    font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-deep);cursor:pointer;
+    background:rgba(255,255,255,.6);transition:background .2s var(--ease),border-color .2s var(--ease),color .2s var(--ease),transform .15s var(--ease);
+  }
+  .pill:hover{background:#fff;transform:translateY(-1px);}
+  .pill:active{transform:translateY(0) scale(.97);}
+  .pill.active{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff;}
+
+  .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:1200px;margin:0 auto;}
+  .photo-mount{position:relative;cursor:pointer;border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 8px 24px -10px rgba(92,27,59,.18);
+    transition:transform .35s var(--ease),box-shadow .35s var(--ease);}
+  .gallery-grid .photo-mount:hover{transform:translateY(-6px);box-shadow:0 22px 40px -16px rgba(92,27,59,.32);}
+  .photo-frame{position:relative;overflow:hidden;}
+  .photo-frame img{width:100%;display:block;aspect-ratio:4/3;object-fit:cover;background:var(--card);transition:transform .5s var(--ease);}
+  .photo-frame:hover img{transform:scale(1.08);}
+  .hover-caption{
+    position:absolute;left:0;right:0;bottom:0;
+    background:linear-gradient(to top, rgba(74,20,45,.75), rgba(74,20,45,0));
+    color:#fff;padding:22px 14px 12px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+    opacity:0;transition:opacity .2s;pointer-events:none;
+  }
+  .photo-frame:hover .hover-caption, .photo-frame.touched .hover-caption{opacity:1;}
+
+  .photo-delete{
+    position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
+    background:rgba(74,20,45,.7);color:#fff;border:none;cursor:pointer;font-size:15px;z-index:5;
+    display:none;align-items:center;justify-content:center;
+  }
+  .admin-on .photo-delete{display:flex;}
+  .gallery-empty{text-align:center;color:var(--ink-faint);font-size:14px;padding:70px 20px;
+    border:1px dashed var(--line-blue);border-radius:var(--radius);max-width:1000px;margin:0 auto;background:rgba(255,255,255,.4);}
+  .view-more-wrap{text-align:center;margin-top:40px;}
+
+  @media (max-width:900px){ .gallery-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .gallery-grid{grid-template-columns:1fr;} }
+
+  /* Lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(43,12,26,.92);display:none;align-items:center;justify-content:center;z-index:200;padding:40px;
+    opacity:0;transition:opacity .25s var(--ease);}
+  .lightbox.open{display:flex;opacity:1;}
+  .lightbox img{max-width:90vw;max-height:82vh;border-radius:8px;transform:scale(.94);transition:transform .3s var(--ease);}
+  .lightbox.open img{transform:scale(1);}
+  .lightbox-close{position:absolute;top:24px;right:32px;color:#fff;font-size:30px;cursor:pointer;background:none;border:none;transition:transform .2s var(--ease),opacity .2s;}
+  .lightbox-close:hover{transform:rotate(90deg);opacity:.8;}
+  .lightbox-cap{color:#F6D9E7;font-size:12.5px;letter-spacing:.04em;margin-top:16px;text-align:center;}
+  .lightbox-cap .cat{color:var(--accent);}
+
+  /* Contact — centered header + horizontal icon row */
+  #contact{background:var(--cream-2);}
+  .contact-edit-btn{display:block;margin:22px auto 0;width:fit-content;}
+  .contact-edit-form{display:none;flex-direction:column;gap:10px;max-width:380px;margin:16px auto 0;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+    box-shadow:0 10px 30px -14px rgba(92,27,59,.15);}
+  .contact-edit-form.open{display:flex;}
+  .contact-edit-form input{padding:10px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit;}
+  .contact-edit-actions{display:flex;gap:8px;margin-top:4px;}
+
+  .contact-rows-wrap{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:34px 0;}
+  .contact-row{display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 28px;position:relative;max-width:150px;}
+  .contact-row:not(:first-child)::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:1px;background:var(--line);}
+  .contact-icon{
+    width:52px;height:52px;border-radius:50%;background:#fff;color:var(--accent-deep);border:1.5px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;flex:none;
+    transition:transform .3s var(--ease),background .3s var(--ease);
+  }
+  .contact-row:hover .contact-icon{transform:scale(1.1) rotate(-6deg);background:var(--accent-deep);color:#fff;border-color:var(--accent-deep);}
+  .contact-row .val{font-size:13px;color:var(--ink);text-align:center;line-height:1.4;word-break:break-word;}
+  @media (max-width:640px){
+    .contact-row:not(:first-child)::before{display:none;}
+    .contact-row{padding:0 14px;}
+  }
+
+  footer{background:var(--accent-deep);color:#fff;padding:30px 48px;}
+  .footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+  .footer-brand{font-family:'Baloo 2',sans-serif;font-size:20px;font-weight:800;}
+  .footer-copy{font-size:11.5px;opacity:.85;}
+  .footer-social{display:flex;gap:12px;}
+  .footer-social a{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;text-decoration:none;}
+  .footer-credit-row{max-width:1200px;margin:14px auto 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.15);text-align:center;}
+  .footer-credit{color:rgba(255,255,255,.75);text-decoration:none;font-size:11.5px;letter-spacing:.02em;transition:color .2s var(--ease);}
+  .footer-credit:hover{color:#fff;}
+  .footer-credit strong{font-weight:700;}
+
+  /* Modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(43,12,26,.5);display:none;align-items:center;justify-content:center;z-index:300;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--card);border-radius:14px;padding:28px;width:290px;box-shadow:0 24px 60px rgba(0,0,0,.3);}
+  .modal h3{font-size:17px;margin-bottom:16px;color:var(--accent-deep);}
+  .modal input{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;font-size:14px;margin-bottom:12px;font-family:inherit;}
+  .modal-err{color:var(--danger);font-size:12px;margin:-6px 0 12px;min-height:14px;}
+  .modal-actions{display:flex;gap:8px;}
+  .modal-actions .btn{flex:1;justify-content:center;}
+  .hint{color:var(--ink-faint);font-size:11px;margin-top:16px;line-height:1.6;}
+
+  /* Scroll-reveal */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
+  .reveal.in-view{opacity:1;transform:none;}
+
+  /* Hero entrance (plays once on load, above the fold) */
+  .hero-left > *{opacity:0;transform:translateY(18px);animation:heroIn .7s var(--ease) forwards;}
+  .hero-left h1{animation-delay:.1s;}
+  .hero-left .hero-rule{animation-delay:.24s;}
+  .hero-left p{animation-delay:.32s;}
+  .hero-left .btn{animation-delay:.42s;}
+  .hero-right{opacity:0;transform:translateY(18px) scale(.97);animation:heroIn .8s var(--ease) .2s forwards;}
+  @keyframes heroIn{to{opacity:1;transform:none;}}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .reveal{opacity:1;transform:none;transition:none;}
+    .hero-left > *, .hero-right{opacity:1;transform:none;animation:none;}
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+  }
+
+  /* Tablet tuning */
+  @media (max-width:1024px) and (min-width:761px){
+    .hero-inner{gap:36px;padding-left:32px;padding-right:32px;}
+    section{padding:64px 32px;}
+    #about .about-grid{gap:36px;}
+  }
+
+  @media (max-width:760px){
+    .hero-inner{grid-template-columns:1fr;}
+    .hero-right{justify-self:center;margin-top:20px;}
+    #about .about-grid, .contact-grid{grid-template-columns:1fr;}
+    .nav-inner{padding:16px 20px;}
+    section{padding:56px 20px;}
+    .nav-links{gap:16px;font-size:11px;}
+  }
+
+  @media (max-width:420px){
+    .nav-links{gap:10px;font-size:10px;}
+    .brand-name{font-size:19px;}
+    section{padding:44px 16px;}
+    .modal{width:min(290px,86vw);}
+    .gallery-toolbar{padding:14px 12px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="brand" id="brandTrigger" role="button" tabindex="0" title="Owner access">
+      <svg width="34" height="34" viewBox="0 0 40 40" fill="none" stroke="#5C1B3B" stroke-width="1.4">
+        <circle cx="14" cy="13" r="6.5"/><circle cx="23" cy="10" r="7.5"/><circle cx="29" cy="17" r="5.5"/>
+        <path d="M14,19.5 L18,33 M23,17.5 L19.5,33 M29,22.5 L20.5,33"/>
+        <path d="M16,33 q3,3.4 6,0" fill="none"/>
+      </svg>
+      <div class="brand-text">
+        <div class="brand-name" id="brandNameEl">Bloonery</div>
+        <div class="brand-sub" id="brandSubEl">Making every moment pop</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#about">About Us</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#contact">Contact Us</a>
+    </div>
+  </div>
+  <div class="admin-banner" id="adminBanner">
+    Editing mode — changes are visible to everyone who visits this page
+    <button id="signoutBtn">Sign out</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline>
+    <source src="assets/hero-video.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <button class="hero-video-toggle" id="heroVideoToggle" title="Pause background video" aria-label="Pause background video">
+    <svg id="heroPauseIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+    <svg id="heroPlayIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
+  </button>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <h1>Making every<br>moment <span class="italic-accent">pop</span></h1>
+      <div class="hero-rule"></div>
+      <p>Beautiful balloons for life's best moments. We bring color, joy and creativity to every celebration.</p>
+      <a href="#gallery" class="btn">Let's celebrate →</a>
+    </div>
+    <div class="hero-right">
+      <div class="hero-image-well" id="heroImageWell">
+        <div class="hero-placeholder" id="heroPlaceholder">Cover photo</div>
+      </div>
+      <label class="btn small hero-upload-btn" id="heroUploadBtn" for="heroFileInput" style="display:none;cursor:pointer;">Change cover photo</label>
+      <input type="file" id="heroFileInput" accept="image/*" style="display:none;">
+      <div id="heroStatus" style="display:none;text-align:center;font-size:12px;color:var(--danger);margin-top:8px;"></div>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-portrait reveal" id="aboutPortrait">
+        <div class="portrait-image-well" id="portraitImageWell">
+          <svg id="portraitPlaceholder" viewBox="0 0 120 140" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="40" cy="35" r="24"/><circle cx="65" cy="30" r="26"/><circle cx="88" cy="42" r="20"/>
+            <circle cx="30" cy="60" r="18"/><circle cx="60" cy="65" r="16"/>
+            <path d="M40,58 L55,120 M65,55 L58,120 M88,60 L62,120 M30,77 L58,120 M60,80 L59,120"/>
+            <path d="M50,120 q9,10 18,0"/>
+          </svg>
+        </div>
+        <label class="btn small portrait-upload-btn" id="portraitUploadBtn" for="portraitFileInput" style="display:none;cursor:pointer;">Change portrait</label>
+        <input type="file" id="portraitFileInput" accept="image/*" style="display:none;">
+        <div id="portraitStatus" style="display:none;position:absolute;top:10px;left:10px;right:10px;text-align:center;font-size:11px;color:#fff;background:rgba(192,64,90,.92);padding:6px 8px;border-radius:6px;"></div>
+      </div>
+      <div id="aboutContent" class="reveal">
+        <div class="flourish-row" style="justify-content:flex-start;"><div class="flourish-line"></div><span class="eyebrow">About Us</span></div>
+        <p class="about-text" id="aboutText"></p>
+        <div class="edit-controls" id="aboutEditControls" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Gallery</span><div class="flourish-line"></div></div>
+      <h2>Our Creations</h2>
+      <p>Every arrangement tells its own story.</p>
+    </div>
+
+    <div class="gallery-toolbar" id="galleryToolbar">
+      <span class="toolbar-label">Category</span>
+      <select id="categorySelect"></select>
+      <input type="text" id="newCategoryInput" placeholder="New category name" style="display:none;">
+      <label class="btn small" for="fileInput" style="cursor:pointer;">+ Add photos</label>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+      <span id="uploadStatus" style="font-size:12px;color:var(--ink-muted);"></span>
+    </div>
+
+    <div class="filter-pills" id="filterPills"></div>
+    <div id="galleryGrid"></div>
+    <div class="view-more-wrap" id="viewMoreWrap" style="display:none;">
+      <button class="btn outline" id="viewMoreBtn">View more →</button>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Contact Us</span><div class="flourish-line"></div></div>
+      <h2>Let's Create <span class="italic-accent">Something Beautiful</span></h2>
+    </div>
+    <div id="contactRows" class="contact-rows-wrap reveal"></div>
+    <div style="text-align:center;">
+      <div class="btn ghost small contact-edit-btn" id="editContactBtn" style="display:none;">Edit contact info</div>
+      <div class="contact-edit-form" id="contactEditForm">
+        <input type="text" id="editInstagram" placeholder="Instagram handle (e.g. @yourname)">
+        <input type="text" id="editPhone" placeholder="Phone number">
+        <input type="text" id="editWhatsapp" placeholder="WhatsApp number">
+        <input type="text" id="editEmail" placeholder="Email address">
+        <input type="text" id="editLocation" placeholder="Location">
+        <div class="contact-edit-actions">
+          <button class="btn small" id="saveContactBtn">Save</button>
+          <button class="btn ghost small" id="cancelContactBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand" id="footerBrand">Bloonery</div>
+    <div class="footer-copy">© <span id="year"></span> All rights reserved.</div>
+    <div class="footer-social">
+      <a href="#" id="footerEmail" title="Email">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="footer-credit-row">
+    <a class="footer-credit" href="https://webelopsites.com" target="_blank" rel="noopener noreferrer">
+      Developed by <strong>Webelop</strong>
+    </a>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">×</button>
+  <div>
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-cap" id="lightboxCap"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="signinModal">
+  <div class="modal">
+    <h3>Owner access</h3>
+    <input type="password" id="passwordInput" placeholder="Password">
+    <div class="modal-err" id="passwordErr"></div>
+    <div class="modal-actions">
+      <button class="btn ghost small" id="cancelSignin">Cancel</button>
+      <button class="btn small" id="submitSignin">Continue</button>
+    </div>
+    <p class="hint">Verified by the server — the password itself is never sent to or stored in the page.</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="brandEditModal">
+  <div class="modal">
+    <h3>Site name</h3>
+    <input type="text" id="brandNameInput" placeholder="Site name" maxlength="60">
+    <input type="text" id="brandSubInput" placeholder="Subtitle (e.g. Making every moment pop)" maxlength="60">
+    <div class="modal-err" id="brandErr"></div>
+    <div class="modal-actions">
+      <button class="btn ghost small" id="cancelBrandEdit">Cancel</button>
+      <button class="btn small" id="saveBrandEdit">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var MAX_DIM = 1400, JPEG_QUALITY = 0.82;
+  var UNCATEGORIZED = "Uncategorized";
+  var PAGE_SIZE = 8;
+
+  var isAdmin = false;
+  var aboutText = "";
+  var photos = [];
+  var contact = { phone: "", whatsapp: "", email: "", location: "", instagram: "" };
+  var heroImage = null;
+  var portraitImage = null;
+  var brand = { name: "Bloonery", sub: "Making every moment pop" };
+  var currentFilter = "All";
+  var visibleCount = PAGE_SIZE;
+
+  var prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var revealObserver = (!prefersReducedMotion && "IntersectionObserver" in window)
+    ? new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){
+            entry.target.classList.add("in-view");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" })
+    : null;
+  function observeReveal(el){
+    if (!el) return;
+    if (!revealObserver){ el.classList.add("in-view"); return; }
+    revealObserver.observe(el);
+  }
+
+  function escapeHtml(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#39;" }[c];
+    });
+  }
+
+  function api(path, opts){
+    opts = opts || {};
+    opts.headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
+    opts.credentials = "same-origin";
+    return fetch(path, opts).then(function(res){
+      return res.json().catch(function(){ return {}; }).then(function(data){
+        if (!res.ok) throw new Error(data && data.error ? data.error : "Request failed");
+        return data;
+      });
+    });
+  }
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // ---------- Hero video ----------
+  var heroVideo = document.getElementById("heroVideo");
+  var heroVideoToggle = document.getElementById("heroVideoToggle");
+  var heroPauseIcon = document.getElementById("heroPauseIcon");
+  var heroPlayIcon = document.getElementById("heroPlayIcon");
+  var videoPlaying = true;
+  function setVideoState(playing){
+    videoPlaying = playing;
+    heroPauseIcon.style.display = playing ? "block" : "none";
+    heroPlayIcon.style.display = playing ? "none" : "block";
+    heroVideoToggle.title = playing ? "Pause background video" : "Play background video";
+    if (playing) heroVideo.play().catch(function(){}); else heroVideo.pause();
+  }
+  heroVideoToggle.addEventListener("click", function(){ setVideoState(!videoPlaying); });
+  if (prefersReducedMotion) setVideoState(false);
+
+  function loadAll(){
+    Promise.all([
+      api("/api/session").catch(function(){ return { isAdmin: false }; }),
+      api("/api/content").catch(function(){ return null; }),
+      api("/api/photos").catch(function(){ return null; })
+    ]).then(function(results){
+      isAdmin = !!(results[0] && results[0].isAdmin);
+      if (results[1]){
+        aboutText = results[1].about || "";
+        contact = results[1].contact || contact;
+        heroImage = results[1].hero || null;
+        portraitImage = results[1].portrait || null;
+        brand = results[1].brand || brand;
+      }
+      if (results[2] && Array.isArray(results[2])) photos = results[2];
+      renderAll();
+    });
+  }
+  function saveAbout(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ about: aboutText }) }); }
+  function saveContact(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ contact: contact }) }); }
+  function saveHero(dataUrl){
+    return api("/api/content", { method: "PUT", body: JSON.stringify({ hero: dataUrl }) }).then(function(res){
+      heroImage = res.hero || null;
+    });
+  }
+  function savePortrait(dataUrl){
+    return api("/api/content", { method: "PUT", body: JSON.stringify({ portrait: dataUrl }) }).then(function(res){
+      portraitImage = res.portrait || null;
+    });
+  }
+  function saveBrand(next){
+    return api("/api/content", { method: "PUT", body: JSON.stringify({ brand: next }) }).then(function(res){
+      brand = res.brand || next;
+    });
+  }
+  function renderBrand(){
+    document.getElementById("brandNameEl").textContent = brand.name || "Bloonery";
+    document.getElementById("brandSubEl").textContent = brand.sub || "Making every moment pop";
+    document.getElementById("footerBrand").textContent = brand.name || "Bloonery";
+    document.title = brand.name || "Bloonery";
+  }
+
+  function applyAdminState(){
+    document.body.classList.toggle("admin-on", isAdmin);
+    document.getElementById("adminBanner").classList.toggle("show", isAdmin);
+    document.getElementById("brandTrigger").title = isAdmin ? "Edit site name" : "Owner access";
+    document.getElementById("galleryToolbar").classList.toggle("show", isAdmin);
+    document.getElementById("heroUploadBtn").style.display = isAdmin ? "inline-flex" : "none";
+    document.getElementById("portraitUploadBtn").style.display = isAdmin ? "inline-flex" : "none";
+    document.getElementById("editContactBtn").style.display = isAdmin ? "inline-block" : "none";
+  }
+
+  function openSigninModal(){
+    document.getElementById("signinModal").classList.add("open");
+    document.getElementById("passwordInput").value = "";
+    document.getElementById("passwordErr").textContent = "";
+    setTimeout(function(){ document.getElementById("passwordInput").focus(); }, 30);
+  }
+  function openBrandEditModal(){
+    document.getElementById("brandNameInput").value = brand.name || "";
+    document.getElementById("brandSubInput").value = brand.sub || "";
+    document.getElementById("brandErr").textContent = "";
+    document.getElementById("brandEditModal").classList.add("open");
+    setTimeout(function(){ document.getElementById("brandNameInput").focus(); }, 30);
+  }
+  document.getElementById("brandTrigger").addEventListener("click", function(){
+    if (isAdmin) openBrandEditModal(); else openSigninModal();
+  });
+  document.getElementById("brandTrigger").addEventListener("keydown", function(e){
+    if (e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      if (isAdmin) openBrandEditModal(); else openSigninModal();
+    }
+  });
+  document.getElementById("cancelBrandEdit").addEventListener("click", function(){
+    document.getElementById("brandEditModal").classList.remove("open");
+  });
+  ["brandNameInput", "brandSubInput"].forEach(function(id){
+    document.getElementById(id).addEventListener("keydown", function(e){
+      if (e.key === "Enter") document.getElementById("saveBrandEdit").click();
+    });
+  });
+  document.getElementById("saveBrandEdit").addEventListener("click", function(){
+    var name = document.getElementById("brandNameInput").value.trim();
+    var sub = document.getElementById("brandSubInput").value.trim();
+    if (!name){
+      document.getElementById("brandErr").textContent = "Site name can't be empty.";
+      return;
+    }
+    var btn = document.getElementById("saveBrandEdit");
+    btn.disabled = true;
+    saveBrand({ name: name, sub: sub }).then(function(){
+      document.getElementById("brandEditModal").classList.remove("open");
+      renderBrand();
+    }).catch(function(err){
+      document.getElementById("brandErr").textContent = err.message || "Couldn't save.";
+    }).then(function(){ btn.disabled = false; });
+  });
+  document.getElementById("cancelSignin").addEventListener("click", function(){
+    document.getElementById("signinModal").classList.remove("open");
+  });
+  document.getElementById("submitSignin").addEventListener("click", attemptSignin);
+  document.getElementById("passwordInput").addEventListener("keydown", function(e){ if (e.key === "Enter") attemptSignin(); });
+  function attemptSignin(){
+    var val = document.getElementById("passwordInput").value;
+    var errEl = document.getElementById("passwordErr");
+    var btn = document.getElementById("submitSignin");
+    errEl.textContent = "";
+    btn.disabled = true;
+    api("/api/login", { method: "POST", body: JSON.stringify({ password: val }) })
+      .then(function(){
+        isAdmin = true;
+        document.getElementById("signinModal").classList.remove("open");
+        renderAll();
+      })
+      .catch(function(err){
+        errEl.textContent = err.message || "Incorrect password.";
+      })
+      .then(function(){ btn.disabled = false; });
+  }
+  document.getElementById("signoutBtn").addEventListener("click", function(){
+    api("/api/logout", { method: "POST" }).then(function(){
+      isAdmin = false;
+      renderAll();
+    });
+  });
+
+  // ---------- Hero cover photo ----------
+  function renderHero(){
+    var well = document.getElementById("heroImageWell");
+    if (heroImage){
+      well.innerHTML = '<img src="' + heroImage + '" alt="Cover">';
+    } else {
+      well.innerHTML = '<div class="hero-placeholder">Cover photo</div>';
+    }
+  }
+  document.getElementById("heroFileInput").addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var statusEl = document.getElementById("heroStatus");
+    statusEl.style.display = "none";
+    statusEl.textContent = "";
+    compressImage(file).then(function(dataUrl){
+      return saveHero(dataUrl);
+    }).then(function(){
+      renderHero();
+    }).catch(function(err){
+      statusEl.textContent = "Couldn't upload cover photo: " + (err && err.message ? err.message : "unknown error");
+      statusEl.style.display = "block";
+    });
+    e.target.value = "";
+  });
+
+  // ---------- Portrait ----------
+  var portraitPlaceholderHTML = document.getElementById("portraitImageWell").innerHTML;
+  function renderPortrait(){
+    var well = document.getElementById("portraitImageWell");
+    if (portraitImage){
+      well.innerHTML = '<img src="' + portraitImage + '" alt="Portrait">';
+    } else {
+      well.innerHTML = portraitPlaceholderHTML;
+    }
+  }
+  document.getElementById("portraitFileInput").addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var statusEl = document.getElementById("portraitStatus");
+    statusEl.style.display = "none";
+    statusEl.textContent = "";
+    compressImage(file).then(function(dataUrl){
+      return savePortrait(dataUrl);
+    }).then(function(){
+      renderPortrait();
+    }).catch(function(err){
+      statusEl.textContent = "Couldn't upload portrait: " + (err && err.message ? err.message : "unknown error");
+      statusEl.style.display = "block";
+    });
+    e.target.value = "";
+  });
+
+  // ---------- About ----------
+  function renderAbout(){
+    document.getElementById("aboutText").textContent = aboutText;
+    var controls = document.getElementById("aboutEditControls");
+    controls.innerHTML = "";
+    controls.style.display = isAdmin ? "flex" : "none";
+    if (isAdmin){
+      var editBtn = document.createElement("button");
+      editBtn.className = "btn ghost small"; editBtn.textContent = "Edit text";
+      editBtn.addEventListener("click", startAboutEdit);
+      controls.appendChild(editBtn);
+    }
+  }
+  function startAboutEdit(){
+    var content = document.getElementById("aboutContent");
+    var flourish = content.querySelector(".flourish-row").outerHTML;
+    content.innerHTML = flourish;
+    var textarea = document.createElement("textarea");
+    textarea.className = "about-edit-area";
+    textarea.value = aboutText;
+    var controls = document.createElement("div");
+    controls.className = "edit-controls";
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "btn small"; saveBtn.textContent = "Save";
+    saveBtn.addEventListener("click", function(){
+      aboutText = textarea.value;
+      saveAbout().catch(function(){});
+      content.innerHTML = flourish + '<p class="about-text" id="aboutText"></p><div class="edit-controls" id="aboutEditControls"></div>';
+      renderAbout();
+    });
+    var cancelBtn = document.createElement("button");
+    cancelBtn.className = "btn ghost small"; cancelBtn.textContent = "Cancel";
+    cancelBtn.addEventListener("click", function(){
+      content.innerHTML = flourish + '<p class="about-text" id="aboutText"></p><div class="edit-controls" id="aboutEditControls"></div>';
+      renderAbout();
+    });
+    controls.appendChild(saveBtn); controls.appendChild(cancelBtn);
+    content.appendChild(textarea); content.appendChild(controls);
+    textarea.focus();
+  }
+
+  // ---------- Categories ----------
+  function getCategories(){
+    var set = {};
+    photos.forEach(function(p){ set[p.category || UNCATEGORIZED] = true; });
+    return Object.keys(set).sort();
+  }
+  function syncNewCategoryVisibility(focus){
+    var sel = document.getElementById("categorySelect");
+    var newInput = document.getElementById("newCategoryInput");
+    var isNew = sel.value === "__new__";
+    newInput.style.display = isNew ? "inline-block" : "none";
+    if (isNew && focus) newInput.focus();
+  }
+  function renderCategorySelect(){
+    var sel = document.getElementById("categorySelect");
+    var cats = getCategories();
+    sel.innerHTML = "";
+    cats.forEach(function(c){
+      var opt = document.createElement("option"); opt.value = c; opt.textContent = c; sel.appendChild(opt);
+    });
+    var newOpt = document.createElement("option"); newOpt.value = "__new__"; newOpt.textContent = "+ New category…";
+    sel.appendChild(newOpt);
+    if (cats.length === 0) sel.value = "__new__";
+    syncNewCategoryVisibility(false);
+  }
+  document.getElementById("categorySelect").addEventListener("change", function(){
+    syncNewCategoryVisibility(true);
+  });
+  function currentUploadCategory(){
+    var sel = document.getElementById("categorySelect");
+    if (sel.value === "__new__"){
+      var typed = document.getElementById("newCategoryInput").value.trim();
+      return typed || UNCATEGORIZED;
+    }
+    return sel.value || UNCATEGORIZED;
+  }
+
+  function renderFilterPills(){
+    var wrap = document.getElementById("filterPills");
+    wrap.innerHTML = "";
+    var cats = getCategories();
+    if (cats.length === 0) return;
+    var all = ["All"].concat(cats);
+    all.forEach(function(c){
+      var pill = document.createElement("div");
+      pill.className = "pill" + (currentFilter === c ? " active" : "");
+      pill.textContent = c;
+      pill.addEventListener("click", function(){ currentFilter = c; visibleCount = PAGE_SIZE; renderGallery(); });
+      wrap.appendChild(pill);
+    });
+  }
+
+  // ---------- Gallery ----------
+  function renderGallery(){
+    renderFilterPills();
+    var grid = document.getElementById("galleryGrid");
+    grid.innerHTML = "";
+
+    var filtered = photos.filter(function(p){
+      return currentFilter === "All" || (p.category || UNCATEGORIZED) === currentFilter;
+    }).slice().reverse();
+
+    if (filtered.length === 0){
+      var empty = document.createElement("div");
+      empty.className = "gallery-empty";
+      empty.textContent = photos.length === 0
+        ? (isAdmin ? "No creations yet — use \"Add photos\" above to upload your first ones." : "No creations yet — check back soon.")
+        : "No creations in this category yet.";
+      grid.appendChild(empty);
+      document.getElementById("viewMoreWrap").style.display = "none";
+      return;
+    }
+
+    var visible = filtered.slice(0, visibleCount);
+    var wrap = document.createElement("div");
+    wrap.className = "gallery-grid";
+    visible.forEach(function(p, i){
+      var mount = document.createElement("div");
+      mount.className = "photo-mount reveal";
+      mount.style.transitionDelay = (Math.min(i, 8) * 0.06) + "s";
+      var frame = document.createElement("div");
+      frame.className = "photo-frame";
+      var img = document.createElement("img");
+      img.src = p.url; img.alt = p.caption || "Gallery photo";
+      frame.appendChild(img);
+      var cap = document.createElement("div");
+      cap.className = "hover-caption";
+      cap.textContent = p.category || UNCATEGORIZED;
+      frame.appendChild(cap);
+      frame.addEventListener("click", function(e){
+        if (window.matchMedia && window.matchMedia("(hover: none)").matches){
+          if (!frame.classList.contains("touched")){
+            e.stopPropagation();
+            document.querySelectorAll(".photo-frame.touched").forEach(function(f){ f.classList.remove("touched"); });
+            frame.classList.add("touched");
+            return;
+          }
+        }
+        openLightbox(p);
+      });
+      mount.appendChild(frame);
+
+      var del = document.createElement("button");
+      del.className = "photo-delete"; del.textContent = "×";
+      del.addEventListener("click", function(e){
+        e.stopPropagation();
+        api("/api/photos?id=" + encodeURIComponent(p.id), { method: "DELETE" }).then(function(){
+          photos = photos.filter(function(x){ return x.id !== p.id; });
+          renderCategorySelect(); renderGallery();
+        }).catch(function(){});
+      });
+      mount.appendChild(del);
+      wrap.appendChild(mount);
+      observeReveal(mount);
+    });
+    grid.appendChild(wrap);
+
+    document.getElementById("viewMoreWrap").style.display = filtered.length > visibleCount ? "block" : "none";
+  }
+  document.getElementById("viewMoreBtn").addEventListener("click", function(){
+    visibleCount += PAGE_SIZE; renderGallery();
+  });
+
+  function openLightbox(p){
+    document.getElementById("lightboxImg").src = p.url;
+    document.getElementById("lightboxCap").innerHTML = '<span class="cat">' + escapeHtml(p.category || UNCATEGORIZED) + '</span>';
+    document.getElementById("lightbox").classList.add("open");
+  }
+  document.getElementById("lightboxClose").addEventListener("click", function(){ document.getElementById("lightbox").classList.remove("open"); });
+  document.getElementById("lightbox").addEventListener("click", function(e){ if (e.target.id === "lightbox") document.getElementById("lightbox").classList.remove("open"); });
+
+  function compressImage(file){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = function(){
+        var img = new Image();
+        img.onerror = reject;
+        img.onload = function(){
+          var w = img.width, h = img.height;
+          if (w > MAX_DIM || h > MAX_DIM){
+            if (w > h){ h = Math.round(h * (MAX_DIM / w)); w = MAX_DIM; } else { w = Math.round(w * (MAX_DIM / h)); h = MAX_DIM; }
+          }
+          var canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", JPEG_QUALITY));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById("fileInput").addEventListener("change", function(e){
+    var files = Array.prototype.slice.call(e.target.files || []);
+    if (files.length === 0) return;
+    var category = currentUploadCategory();
+    var statusEl = document.getElementById("uploadStatus");
+    var succeeded = 0, failed = 0, attempted = 0;
+    var lastError = "";
+    statusEl.style.color = "";
+    statusEl.textContent = "Uploading 0/" + files.length + "…";
+    var chain = Promise.resolve();
+    files.forEach(function(file){
+      chain = chain.then(function(){
+        return compressImage(file).then(function(dataUrl){
+          var caption = file.name.replace(/\.[^.]+$/,"");
+          return api("/api/photos", { method: "POST", body: JSON.stringify({ dataUrl: dataUrl, caption: caption, category: category }) });
+        }).then(function(photo){
+          photos.push(photo);
+          succeeded++;
+        }).catch(function(err){
+          failed++;
+          lastError = (err && err.message) ? err.message : "unknown error";
+        }).then(function(){
+          attempted++;
+          statusEl.textContent = "Uploading " + attempted + "/" + files.length + "…";
+        });
+      });
+    });
+    chain.then(function(){
+      renderCategorySelect(); renderGallery();
+      if (failed === 0){
+        statusEl.style.color = "";
+        statusEl.textContent = "Added " + succeeded + " photo" + (succeeded===1?"":"s") + " to \"" + category + "\".";
+        setTimeout(function(){ statusEl.textContent = ""; }, 3000);
+      } else {
+        statusEl.style.color = "var(--danger)";
+        statusEl.textContent = succeeded + " of " + files.length + " uploaded — " + failed + " failed: " + lastError;
+      }
+      e.target.value = "";
+      document.getElementById("newCategoryInput").value = "";
+      document.getElementById("newCategoryInput").style.display = "none";
+    });
+  });
+
+  // ---------- Contact ----------
+  function iconInsta(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>'; }
+  function iconPhone(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'; }
+  function iconWhatsapp(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>'; }
+  function iconMail(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>'; }
+  function iconPin(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 6-9 13-9 13s-9-7-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'; }
+
+  function renderContact(){
+    var rows = document.getElementById("contactRows");
+    rows.innerHTML =
+      row(iconInsta(), contact.instagram) +
+      row(iconPhone(), contact.phone) +
+      row(iconWhatsapp(), contact.whatsapp) +
+      row(iconMail(), contact.email) +
+      row(iconPin(), contact.location);
+    document.getElementById("footerEmail").href = "mailto:" + contact.email;
+  }
+  function row(icon, value){
+    return '<div class="contact-row"><div class="contact-icon">' + icon + '</div><div class="val">' + escapeHtml(value || "—") + '</div></div>';
+  }
+  document.getElementById("editContactBtn").addEventListener("click", function(){
+    document.getElementById("editInstagram").value = contact.instagram || "";
+    document.getElementById("editPhone").value = contact.phone || "";
+    document.getElementById("editWhatsapp").value = contact.whatsapp || "";
+    document.getElementById("editEmail").value = contact.email || "";
+    document.getElementById("editLocation").value = contact.location || "";
+    document.getElementById("contactEditForm").classList.add("open");
+  });
+  document.getElementById("cancelContactBtn").addEventListener("click", function(){
+    document.getElementById("contactEditForm").classList.remove("open");
+  });
+  document.getElementById("saveContactBtn").addEventListener("click", function(){
+    contact = {
+      instagram: document.getElementById("editInstagram").value.trim(),
+      phone: document.getElementById("editPhone").value.trim(),
+      whatsapp: document.getElementById("editWhatsapp").value.trim(),
+      email: document.getElementById("editEmail").value.trim(),
+      location: document.getElementById("editLocation").value.trim()
+    };
+    saveContact().catch(function(){});
+    renderContact();
+    document.getElementById("contactEditForm").classList.remove("open");
+  });
+
+  // ---------- Init ----------
+  function renderAll(){
+    applyAdminState();
+    renderBrand();
+    renderHero();
+    renderPortrait();
+    renderAbout();
+    renderCategorySelect();
+    renderGallery();
+    renderContact();
+    document.querySelectorAll(".reveal").forEach(observeReveal);
+  }
+  loadAll();
+})();
+</script>
+</body>
+</html>
