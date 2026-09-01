@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Baloo+2:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#FDEAF1;
+    --cream:#FFEAF6;
     --cream-2:#FDF3F8;
     --blue-bg:#FBE2ED;
     --card:#FFFFFF;
@@ -20,7 +20,7 @@
     --line-blue:#F3D6E6;
     --accent:#EC6FA6;
     --accent-dark:#D65790;
-    --accent-deep:#5C1B3B;
+    --accent-deep:#5C0A2D;
     --danger:#C0405A;
     --radius:14px;
     --ease:cubic-bezier(.22,.61,.36,1);
@@ -49,6 +49,7 @@
   .brand{display:flex;align-items:center;gap:10px;cursor:pointer;border-radius:8px;padding:4px 6px;margin:-4px -6px;transition:background .2s var(--ease);}
   .brand:hover{background:rgba(236,111,166,.12);}
   .brand svg{flex:none;}
+  .brand-logo{width:36px;height:36px;object-fit:contain;flex:none;}
   .brand-text{line-height:1.05;}
   .brand-name{font-family:'Baloo 2',sans-serif;font-size:23px;color:var(--accent-deep);font-weight:800;letter-spacing:.01em;}
   .brand-sub{font-size:8.5px;letter-spacing:.18em;color:var(--ink-muted);text-transform:uppercase;margin-top:1px;}
@@ -78,37 +79,44 @@
   .btn.small{padding:8px 16px;font-size:11px;}
 
   /* Hero */
-  .hero{position:relative;overflow:hidden;background:var(--cream);min-height:600px;display:flex;align-items:center;}
-  .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
-  .hero-overlay{
-    position:absolute;inset:0;z-index:1;
-    background:linear-gradient(100deg, rgba(253,234,241,.95) 0%, rgba(253,234,241,.74) 40%, rgba(253,234,241,.34) 72%, rgba(253,234,241,.16) 100%);
+  .hero{position:relative;overflow:hidden;background:var(--cream);min-height:680px;display:flex;align-items:center;}
+  .hero-decor{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .twinkle-spark{position:absolute;animation:sparkLife 2.4s ease-in-out forwards;}
+  @keyframes sparkLife{
+    0%{opacity:0;transform:scale(.2) rotate(0deg);}
+    22%{opacity:.9;transform:scale(1) rotate(20deg);}
+    70%{opacity:.7;transform:scale(1) rotate(50deg);}
+    100%{opacity:0;transform:scale(.3) rotate(80deg);}
   }
-  .hero-video-toggle{
-    position:absolute;right:26px;bottom:26px;z-index:3;width:38px;height:38px;border-radius:50%;
-    background:rgba(92,27,59,.55);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-    backdrop-filter:blur(4px);transition:background .2s var(--ease);
-  }
-  .hero-video-toggle:hover{background:rgba(92,27,59,.85);}
   .hero-inner{
     position:relative;z-index:2;width:100%;
-    max-width:1200px;margin:0 auto;padding:60px 48px 90px;
-    display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center;
+    max-width:1280px;margin:0 auto;padding:60px 40px 90px;
+    display:grid;grid-template-columns:.8fr 1.2fr;gap:32px;align-items:center;
   }
   .hero-left h1{font-size:clamp(30px,5vw,48px);line-height:1.15;margin-bottom:20px;}
   .hero-left p{color:var(--ink-muted);font-size:14.5px;line-height:1.75;max-width:400px;margin-bottom:30px;}
   .hero-rule{width:46px;height:3px;border-radius:2px;background:var(--accent);margin-bottom:22px;}
 
-  .hero-right{position:relative;max-width:260px;justify-self:end;}
-  .hero-image-well{
-    aspect-ratio:1/1;border-radius:50% / 46%;overflow:hidden;position:relative;
+  .hero-right{position:relative;width:100%;max-width:680px;justify-self:end;}
+  .hero-cluster{position:relative;aspect-ratio:4/3.4;}
+  .hero-well{
+    position:absolute;overflow:hidden;border-radius:20px;
     background:linear-gradient(150deg,var(--blue-bg),var(--cream));
     display:flex;align-items:center;justify-content:center;
     box-shadow:0 22px 45px -18px rgba(92,27,59,.4);border:4px solid #fff;
+    transition:top 1s var(--ease),left 1s var(--ease),width 1s var(--ease),height 1s var(--ease);
+    animation:heroFloat 6s ease-in-out infinite;
   }
-  .hero-image-well img{width:100%;height:100%;object-fit:cover;}
-  .hero-placeholder{color:var(--accent-deep);opacity:.5;text-align:center;font-size:12px;letter-spacing:.05em;}
-  .hero-upload-btn{position:absolute;bottom:14px;left:0;right:0;margin:0 auto;width:fit-content;}
+  .hero-well img{width:100%;height:100%;object-fit:cover;}
+  .hero-well[data-role="main"]{top:8%;left:0;width:56%;height:82%;z-index:1;animation-delay:0s;}
+  .hero-well[data-role="top"]{top:0;left:54%;width:46%;height:36%;z-index:2;animation-delay:-2s;animation-duration:5s;}
+  .hero-well[data-role="bottom"]{top:48%;left:50%;width:50%;height:50%;z-index:3;animation-delay:-4s;animation-duration:7s;}
+  @keyframes heroFloat{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-12px) rotate(1.2deg);}
+  }
+  .hero-placeholder{color:var(--accent-deep);opacity:.5;text-align:center;font-size:11px;letter-spacing:.05em;}
+  .hero-upload-btn{display:block;margin:18px auto 0;width:fit-content;}
   .portrait-upload-btn{position:absolute;bottom:14px;left:0;right:0;margin:0 auto;width:fit-content;}
 
   section{padding:80px 48px;}
@@ -121,7 +129,8 @@
   .section-head p{color:var(--ink-muted);font-size:13.5px;}
 
   /* About */
-  #about{background:var(--cream-2);}
+  #about{background:var(--cream-2);position:relative;overflow:hidden;}
+  #gallery,#contact{position:relative;overflow:hidden;}
   #about .about-grid{display:grid;grid-template-columns:.7fr 1.3fr;gap:52px;align-items:center;max-width:960px;margin:0 auto;}
   .about-portrait{
     aspect-ratio:4/5;border-radius:var(--radius);position:relative;overflow:hidden;
@@ -226,6 +235,8 @@
 
   footer{background:var(--accent-deep);color:#fff;padding:30px 48px;}
   .footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+  .footer-brand-wrap{display:flex;align-items:center;gap:10px;}
+  .footer-logo{width:30px;height:30px;object-fit:contain;filter:brightness(0) invert(1);}
   .footer-brand{font-family:'Baloo 2',sans-serif;font-size:20px;font-weight:800;}
   .footer-copy{font-size:11.5px;opacity:.85;}
   .footer-social{display:flex;gap:12px;}
@@ -275,7 +286,7 @@
 
   @media (max-width:760px){
     .hero-inner{grid-template-columns:1fr;}
-    .hero-right{justify-self:center;margin-top:20px;}
+    .hero-right{justify-self:stretch;width:100%;max-width:440px;margin:20px auto 0;}
     #about .about-grid, .contact-grid{grid-template-columns:1fr;}
     .nav-inner{padding:16px 20px;}
     section{padding:56px 20px;}
@@ -296,11 +307,7 @@
 <nav>
   <div class="nav-inner">
     <div class="brand" id="brandTrigger" role="button" tabindex="0" title="Owner access">
-      <svg width="34" height="34" viewBox="0 0 40 40" fill="none" stroke="#5C1B3B" stroke-width="1.4">
-        <circle cx="14" cy="13" r="6.5"/><circle cx="23" cy="10" r="7.5"/><circle cx="29" cy="17" r="5.5"/>
-        <path d="M14,19.5 L18,33 M23,17.5 L19.5,33 M29,22.5 L20.5,33"/>
-        <path d="M16,33 q3,3.4 6,0" fill="none"/>
-      </svg>
+      <img src="assets/logo.png" alt="Bloonery logo" class="brand-logo">
       <div class="brand-text">
         <div class="brand-name" id="brandNameEl">Bloonery</div>
         <div class="brand-sub" id="brandSubEl">Making every moment pop</div>
@@ -320,14 +327,7 @@
 </nav>
 
 <header class="hero">
-  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline>
-    <source src="assets/hero-video.mp4" type="video/mp4">
-  </video>
-  <div class="hero-overlay"></div>
-  <button class="hero-video-toggle" id="heroVideoToggle" title="Pause background video" aria-label="Pause background video">
-    <svg id="heroPauseIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
-    <svg id="heroPlayIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
-  </button>
+  <div class="hero-decor sparkle-field" id="heroSparkles" aria-hidden="true"></div>
   <div class="hero-inner">
     <div class="hero-left">
       <h1>Making every<br>moment <span class="italic-accent">pop</span></h1>
@@ -336,8 +336,12 @@
       <a href="#gallery" class="btn">Let's celebrate →</a>
     </div>
     <div class="hero-right">
-      <div class="hero-image-well" id="heroImageWell">
-        <div class="hero-placeholder" id="heroPlaceholder">Cover photo</div>
+      <div class="hero-cluster" id="heroCluster">
+        <div class="hero-well" data-role="main" id="heroImageWell">
+          <div class="hero-placeholder" id="heroPlaceholder">Cover photo</div>
+        </div>
+        <div class="hero-well" data-role="top"><img src="assets/gallery/dessert-table.jpg" alt="Rose gold balloon dessert table by Bloonery"></div>
+        <div class="hero-well" data-role="bottom"><img src="assets/gallery/mint-gold-centerpieces.jpg" alt="Emerald and gold balloon centerpieces by Bloonery"></div>
       </div>
       <label class="btn small hero-upload-btn" id="heroUploadBtn" for="heroFileInput" style="display:none;cursor:pointer;">Change cover photo</label>
       <input type="file" id="heroFileInput" accept="image/*" style="display:none;">
@@ -347,6 +351,8 @@
 </header>
 
 <section id="about">
+  <div class="hero-decor" aria-hidden="true">
+  </div>
   <div class="section-inner">
     <div class="about-grid">
       <div class="about-portrait reveal" id="aboutPortrait">
@@ -372,6 +378,7 @@
 </section>
 
 <section id="gallery">
+  <div class="hero-decor" aria-hidden="true"></div>
   <div class="section-inner">
     <div class="section-head reveal">
       <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Gallery</span><div class="flourish-line"></div></div>
@@ -397,6 +404,7 @@
 </section>
 
 <section id="contact">
+  <div class="hero-decor" aria-hidden="true"></div>
   <div class="section-inner">
     <div class="section-head reveal">
       <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Contact Us</span><div class="flourish-line"></div></div>
@@ -422,7 +430,10 @@
 
 <footer>
   <div class="footer-inner">
-    <div class="footer-brand" id="footerBrand">Bloonery</div>
+    <div class="footer-brand-wrap">
+      <img src="assets/logo.png" alt="Bloonery logo" class="footer-logo">
+      <div class="footer-brand" id="footerBrand">Bloonery</div>
+    </div>
     <div class="footer-copy">© <span id="year"></span> All rights reserved.</div>
     <div class="footer-social">
       <a href="#" id="footerEmail" title="Email">
@@ -506,6 +517,36 @@
     revealObserver.observe(el);
   }
 
+  // ---------- Random twinkling sparkles ----------
+  var SPARK_PATH = "M8 0l1.4 5.6L15 7l-5.6 1.4L8 14l-1.4-5.6L1 7l5.6-1.4z";
+  function spawnSparkle(container, opts){
+    opts = opts || {};
+    var minSize = opts.minSize || 8, maxSize = opts.maxSize || 22;
+    var leftMin = opts.leftMin != null ? opts.leftMin : 2, leftMax = opts.leftMax != null ? opts.leftMax : 94;
+    var topMin = opts.topMin != null ? opts.topMin : 4, topMax = opts.topMax != null ? opts.topMax : 92;
+    var size = minSize + Math.random() * (maxSize - minSize);
+    var spark = document.createElement("div");
+    spark.className = "twinkle-spark";
+    spark.style.width = size + "px";
+    spark.style.height = size + "px";
+    spark.style.left = (leftMin + Math.random() * (leftMax - leftMin)) + "%";
+    spark.style.top = (topMin + Math.random() * (topMax - topMin)) + "%";
+    spark.style.color = Math.random() > 0.5 ? "var(--accent)" : "var(--accent-deep)";
+    spark.innerHTML = '<svg viewBox="0 0 16 16" width="100%" height="100%" fill="currentColor"><path d="' + SPARK_PATH + '"/></svg>';
+    container.appendChild(spark);
+    setTimeout(function(){ spark.remove(); }, 2400);
+  }
+  function startSparkleField(container, opts){
+    spawnSparkle(container, opts);
+    setInterval(function(){ spawnSparkle(container, opts); }, 700 + Math.random() * 500);
+  }
+  if (!prefersReducedMotion){
+    startSparkleField(document.getElementById("heroSparkles"), { minSize: 22, maxSize: 52, leftMin: 2, leftMax: 46, topMin: 6, topMax: 78 });
+    document.querySelectorAll(".hero-decor").forEach(function(el){
+      if (el.id !== "heroSparkles") startSparkleField(el);
+    });
+  }
+
   function escapeHtml(s){
     return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
       return { "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#39;" }[c];
@@ -525,22 +566,6 @@
   }
 
   document.getElementById("year").textContent = new Date().getFullYear();
-
-  // ---------- Hero video ----------
-  var heroVideo = document.getElementById("heroVideo");
-  var heroVideoToggle = document.getElementById("heroVideoToggle");
-  var heroPauseIcon = document.getElementById("heroPauseIcon");
-  var heroPlayIcon = document.getElementById("heroPlayIcon");
-  var videoPlaying = true;
-  function setVideoState(playing){
-    videoPlaying = playing;
-    heroPauseIcon.style.display = playing ? "block" : "none";
-    heroPlayIcon.style.display = playing ? "none" : "block";
-    heroVideoToggle.title = playing ? "Pause background video" : "Play background video";
-    if (playing) heroVideo.play().catch(function(){}); else heroVideo.pause();
-  }
-  heroVideoToggle.addEventListener("click", function(){ setVideoState(!videoPlaying); });
-  if (prefersReducedMotion) setVideoState(false);
 
   function loadAll(){
     Promise.all([
@@ -670,13 +695,21 @@
   });
 
   // ---------- Hero cover photo ----------
+  var DEFAULT_HERO = "assets/hero.jpg";
   function renderHero(){
     var well = document.getElementById("heroImageWell");
-    if (heroImage){
-      well.innerHTML = '<img src="' + heroImage + '" alt="Cover">';
-    } else {
-      well.innerHTML = '<div class="hero-placeholder">Cover photo</div>';
-    }
+    well.innerHTML = '<img src="' + (heroImage || DEFAULT_HERO) + '" alt="Balloon arch by Bloonery">';
+  }
+
+  // ---------- Hero cluster rotation (clockwise, every 7s) ----------
+  function rotateHeroCluster(){
+    var roleMap = { main: "top", top: "bottom", bottom: "main" };
+    document.querySelectorAll(".hero-well").forEach(function(well){
+      well.setAttribute("data-role", roleMap[well.getAttribute("data-role")]);
+    });
+  }
+  if (!prefersReducedMotion){
+    setInterval(rotateHeroCluster, 7000);
   }
   document.getElementById("heroFileInput").addEventListener("change", function(e){
     var file = e.target.files && e.target.files[0];
