@@ -41,7 +41,7 @@
   .italic-accent{font-style:normal;color:var(--accent);}
 
   /* Nav */
-  nav{position:sticky;top:0;z-index:50;background:rgba(253,234,241,.85);backdrop-filter:blur(8px);}
+  nav{position:sticky;top:0;z-index:50;background:rgba(253,234,241,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
   .nav-inner{
     display:flex;align-items:center;justify-content:space-between;
     padding:18px 48px;max-width:1200px;margin:0 auto;
@@ -108,6 +108,13 @@
     animation:heroFloat 6s ease-in-out infinite;
   }
   .hero-well img{width:100%;height:100%;object-fit:cover;}
+  .hero-edit-btn{
+    display:none;position:absolute;bottom:10px;right:10px;z-index:6;width:32px;height:32px;border-radius:50%;
+    background:rgba(255,255,255,.92);color:var(--accent-deep);align-items:center;justify-content:center;
+    cursor:pointer;font-size:14px;box-shadow:0 6px 16px -4px rgba(92,27,59,.5);transition:transform .2s var(--ease),background .2s var(--ease);
+  }
+  .hero-edit-btn:hover{transform:scale(1.1);background:#fff;}
+  .admin-on .hero-edit-btn{display:flex;}
   .hero-well[data-role="main"]{top:8%;left:0;width:56%;height:82%;z-index:1;animation-delay:0s;}
   .hero-well[data-role="top"]{top:0;left:54%;width:46%;height:36%;z-index:2;animation-delay:-2s;animation-duration:5s;}
   .hero-well[data-role="bottom"]{top:48%;left:50%;width:50%;height:50%;z-index:3;animation-delay:-4s;animation-duration:7s;}
@@ -115,8 +122,6 @@
     0%,100%{transform:translateY(0) rotate(0deg);}
     50%{transform:translateY(-12px) rotate(1.2deg);}
   }
-  .hero-placeholder{color:var(--accent-deep);opacity:.5;text-align:center;font-size:11px;letter-spacing:.05em;}
-  .hero-upload-btn{display:block;margin:18px auto 0;width:fit-content;}
   .portrait-upload-btn{position:absolute;bottom:14px;left:0;right:0;margin:0 auto;width:fit-content;}
 
   section{padding:80px 48px;}
@@ -337,14 +342,22 @@
     </div>
     <div class="hero-right">
       <div class="hero-cluster" id="heroCluster">
-        <div class="hero-well" data-role="main" id="heroImageWell">
-          <div class="hero-placeholder" id="heroPlaceholder">Cover photo</div>
+        <div class="hero-well" data-role="main" id="heroWell1">
+          <img id="heroImg1" src="" alt="Balloon photo by Bloonery">
+          <label class="hero-edit-btn" for="heroFile1" title="Change this photo">✎</label>
+          <input type="file" id="heroFile1" accept="image/*" style="display:none;">
         </div>
-        <div class="hero-well" data-role="top"><img src="assets/gallery/dessert-table.jpg" alt="Rose gold balloon dessert table by Bloonery"></div>
-        <div class="hero-well" data-role="bottom"><img src="assets/gallery/mint-gold-centerpieces.jpg" alt="Emerald and gold balloon centerpieces by Bloonery"></div>
+        <div class="hero-well" data-role="top" id="heroWell2">
+          <img id="heroImg2" src="" alt="Balloon photo by Bloonery">
+          <label class="hero-edit-btn" for="heroFile2" title="Change this photo">✎</label>
+          <input type="file" id="heroFile2" accept="image/*" style="display:none;">
+        </div>
+        <div class="hero-well" data-role="bottom" id="heroWell3">
+          <img id="heroImg3" src="" alt="Balloon photo by Bloonery">
+          <label class="hero-edit-btn" for="heroFile3" title="Change this photo">✎</label>
+          <input type="file" id="heroFile3" accept="image/*" style="display:none;">
+        </div>
       </div>
-      <label class="btn small hero-upload-btn" id="heroUploadBtn" for="heroFileInput" style="display:none;cursor:pointer;">Change cover photo</label>
-      <input type="file" id="heroFileInput" accept="image/*" style="display:none;">
       <div id="heroStatus" style="display:none;text-align:center;font-size:12px;color:var(--danger);margin-top:8px;"></div>
     </div>
   </div>
@@ -494,7 +507,7 @@
   var aboutText = "";
   var photos = [];
   var contact = { phone: "", whatsapp: "", email: "", location: "", instagram: "" };
-  var heroImage = null;
+  var heroImages = [null, null, null];
   var portraitImage = null;
   var brand = { name: "Bloonery", sub: "Making every moment pop" };
   var currentFilter = "All";
@@ -577,7 +590,7 @@
       if (results[1]){
         aboutText = results[1].about || "";
         contact = results[1].contact || contact;
-        heroImage = results[1].hero || null;
+        heroImages = [results[1].hero1 || null, results[1].hero2 || null, results[1].hero3 || null];
         portraitImage = results[1].portrait || null;
         brand = results[1].brand || brand;
       }
@@ -587,9 +600,11 @@
   }
   function saveAbout(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ about: aboutText }) }); }
   function saveContact(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ contact: contact }) }); }
-  function saveHero(dataUrl){
-    return api("/api/content", { method: "PUT", body: JSON.stringify({ hero: dataUrl }) }).then(function(res){
-      heroImage = res.hero || null;
+  function saveHeroSlot(index, dataUrl){
+    var key = "hero" + (index + 1);
+    var body = {}; body[key] = dataUrl;
+    return api("/api/content", { method: "PUT", body: JSON.stringify(body) }).then(function(res){
+      heroImages[index] = res[key] || null;
     });
   }
   function savePortrait(dataUrl){
@@ -614,7 +629,6 @@
     document.getElementById("adminBanner").classList.toggle("show", isAdmin);
     document.getElementById("brandTrigger").title = isAdmin ? "Edit site name" : "Owner access";
     document.getElementById("galleryToolbar").classList.toggle("show", isAdmin);
-    document.getElementById("heroUploadBtn").style.display = isAdmin ? "inline-flex" : "none";
     document.getElementById("portraitUploadBtn").style.display = isAdmin ? "inline-flex" : "none";
     document.getElementById("editContactBtn").style.display = isAdmin ? "inline-block" : "none";
   }
@@ -694,12 +708,31 @@
     });
   });
 
-  // ---------- Hero cover photo ----------
-  var DEFAULT_HERO = "assets/hero.jpg";
+  // ---------- Hero cover photos (3, independently editable) ----------
+  var DEFAULT_HERO_IMAGES = ["assets/hero.jpg", "assets/gallery/dessert-table.jpg", "assets/gallery/mint-gold-centerpieces.jpg"];
   function renderHero(){
-    var well = document.getElementById("heroImageWell");
-    well.innerHTML = '<img src="' + (heroImage || DEFAULT_HERO) + '" alt="Balloon arch by Bloonery">';
+    for (var i = 0; i < 3; i++){
+      document.getElementById("heroImg" + (i + 1)).src = heroImages[i] || DEFAULT_HERO_IMAGES[i];
+    }
   }
+  [0, 1, 2].forEach(function(i){
+    document.getElementById("heroFile" + (i + 1)).addEventListener("change", function(e){
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      var statusEl = document.getElementById("heroStatus");
+      statusEl.style.display = "none";
+      statusEl.textContent = "";
+      compressImage(file).then(function(dataUrl){
+        return saveHeroSlot(i, dataUrl);
+      }).then(function(){
+        renderHero();
+      }).catch(function(err){
+        statusEl.textContent = "Couldn't upload photo: " + (err && err.message ? err.message : "unknown error");
+        statusEl.style.display = "block";
+      });
+      e.target.value = "";
+    });
+  });
 
   // ---------- Hero cluster rotation (clockwise, every 7s) ----------
   function rotateHeroCluster(){
@@ -711,22 +744,6 @@
   if (!prefersReducedMotion){
     setInterval(rotateHeroCluster, 7000);
   }
-  document.getElementById("heroFileInput").addEventListener("change", function(e){
-    var file = e.target.files && e.target.files[0];
-    if (!file) return;
-    var statusEl = document.getElementById("heroStatus");
-    statusEl.style.display = "none";
-    statusEl.textContent = "";
-    compressImage(file).then(function(dataUrl){
-      return saveHero(dataUrl);
-    }).then(function(){
-      renderHero();
-    }).catch(function(err){
-      statusEl.textContent = "Couldn't upload cover photo: " + (err && err.message ? err.message : "unknown error");
-      statusEl.style.display = "block";
-    });
-    e.target.value = "";
-  });
 
   // ---------- Portrait ----------
   var portraitPlaceholderHTML = document.getElementById("portraitImageWell").innerHTML;

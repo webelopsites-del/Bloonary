@@ -43,14 +43,16 @@ module.exports = withHandler(async (req, res) => {
   res.setHeader("Content-Type", "application/json");
 
   if (req.method === "GET") {
-    const [about, contact, hero, portrait, brand] = await Promise.all([
+    const [about, contact, hero1, hero2, hero3, portrait, brand] = await Promise.all([
       store.get("about", DEFAULT_ABOUT),
       store.get("contact", DEFAULT_CONTACT),
-      store.get("hero", null),
+      store.get("hero1", null),
+      store.get("hero2", null),
+      store.get("hero3", null),
       store.get("portrait", null),
       store.get("brand", DEFAULT_BRAND),
     ]);
-    return res.end(JSON.stringify({ about, contact, hero, portrait, brand }));
+    return res.end(JSON.stringify({ about, contact, hero1, hero2, hero3, portrait, brand }));
   }
 
   if (req.method === "PUT") {
@@ -83,14 +85,16 @@ module.exports = withHandler(async (req, res) => {
       });
     }
 
-    if (typeof body.hero === "string" && body.hero) {
-      const saved = await saveImageField("hero", body.hero);
-      if (!saved) {
-        res.statusCode = 400;
-        return res.end(JSON.stringify({ error: "Invalid or oversized cover photo." }));
+    for (const key of ["hero1", "hero2", "hero3"]) {
+      if (typeof body[key] === "string" && body[key]) {
+        const saved = await saveImageField(key, body[key]);
+        if (!saved) {
+          res.statusCode = 400;
+          return res.end(JSON.stringify({ error: "Invalid or oversized cover photo." }));
+        }
+      } else if (body[key] === null) {
+        await clearImageField(key);
       }
-    } else if (body.hero === null) {
-      await clearImageField("hero");
     }
 
     if (typeof body.portrait === "string" && body.portrait) {
@@ -103,12 +107,14 @@ module.exports = withHandler(async (req, res) => {
       await clearImageField("portrait");
     }
 
-    const [hero, portrait, brand] = await Promise.all([
-      store.get("hero", null),
+    const [hero1, hero2, hero3, portrait, brand] = await Promise.all([
+      store.get("hero1", null),
+      store.get("hero2", null),
+      store.get("hero3", null),
       store.get("portrait", null),
       store.get("brand", DEFAULT_BRAND),
     ]);
-    return res.end(JSON.stringify({ ok: true, hero, portrait, brand }));
+    return res.end(JSON.stringify({ ok: true, hero1, hero2, hero3, portrait, brand }));
   }
 
   res.statusCode = 405;
