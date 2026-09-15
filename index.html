@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bloonery</title>
+<link rel="icon" href="/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Baloo+2:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -54,10 +55,64 @@
   .brand-name{font-family:'Baloo 2',sans-serif;font-size:23px;color:var(--accent-deep);font-weight:800;letter-spacing:.01em;}
   .brand-sub{font-size:8.5px;letter-spacing:.18em;color:var(--ink-muted);text-transform:uppercase;margin-top:1px;}
   .nav-links{display:flex;align-items:center;gap:32px;font-size:12.5px;}
-  .nav-links a{position:relative;text-decoration:none;color:var(--accent-deep);letter-spacing:.06em;text-transform:uppercase;font-weight:500;transition:color .2s var(--ease);}
-  .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:1.5px;background:var(--accent);transition:right .25s var(--ease);}
-  .nav-links a:hover{color:var(--accent);}
-  .nav-links a:hover::after{right:0;}
+  .nav-links .nav-item{position:relative;text-decoration:none;color:var(--accent-deep);letter-spacing:.06em;text-transform:uppercase;font-weight:500;transition:color .2s var(--ease);background:none;border:none;cursor:pointer;font:inherit;padding:0;display:inline-flex;align-items:center;gap:4px;}
+  .nav-links .nav-item::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:1.5px;background:var(--accent);transition:right .25s var(--ease);}
+  .nav-links .nav-item:hover{color:var(--accent);}
+  .nav-links .nav-item:hover::after{right:0;}
+
+  .nav-dropdown{position:relative;}
+  .nav-dropdown-trigger .caret{font-size:8px;transition:transform .2s var(--ease);}
+  .nav-dropdown.open .nav-dropdown-trigger .caret{transform:rotate(180deg);}
+  .nav-dropdown-menu{
+    position:absolute;top:calc(100% + 16px);left:50%;transform:translateX(-50%);
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 14px 32px -12px rgba(92,27,59,.25);
+    padding:8px;min-width:210px;display:none;flex-direction:column;gap:2px;z-index:60;
+  }
+  .nav-dropdown.open .nav-dropdown-menu{display:flex;}
+  .nav-dropdown-menu a{
+    text-decoration:none;color:var(--ink);letter-spacing:.02em;text-transform:none;font-weight:500;
+    font-size:13px;padding:9px 12px;border-radius:6px;transition:background .2s var(--ease),color .2s var(--ease);
+    white-space:nowrap;display:block;
+  }
+  .nav-dropdown-menu a:hover{background:var(--cream-2);color:var(--accent-deep);}
+  @media (max-width:480px){
+    .nav-dropdown-menu{left:auto;right:0;transform:none;min-width:180px;}
+  }
+
+  .nav-toggle{
+    display:none;background:none;border:none;cursor:pointer;padding:6px;
+    width:38px;height:38px;flex:none;align-items:center;justify-content:center;
+    flex-direction:column;gap:5px;border-radius:8px;
+  }
+  .nav-toggle span{display:block;width:22px;height:2px;background:var(--accent-deep);border-radius:2px;transition:transform .25s var(--ease),opacity .2s var(--ease);}
+  .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .nav-toggle.open span:nth-child(2){opacity:0;}
+  .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  @media (max-width:860px){
+    nav{position:relative;}
+    .nav-toggle{display:flex;}
+    .nav-links{
+      position:absolute;top:100%;left:0;right:0;z-index:55;
+      flex-direction:column;align-items:stretch;gap:0;
+      background:var(--card);border-bottom:1px solid var(--line);
+      box-shadow:0 16px 30px -18px rgba(92,27,59,.35);
+      max-height:0;overflow:hidden;transition:max-height .3s var(--ease);
+    }
+    .nav-links.open{max-height:70vh;overflow-y:auto;}
+    .nav-links .nav-item{
+      width:100%;justify-content:space-between;padding:16px 22px;font-size:14px;
+      border-bottom:1px solid var(--line);letter-spacing:.04em;
+    }
+    .nav-links .nav-item::after{content:none;}
+    .nav-dropdown{width:100%;}
+    .nav-dropdown-menu{
+      position:static;transform:none;box-shadow:none;border:none;border-radius:0;
+      background:var(--cream-2);padding:0;min-width:0;width:100%;
+    }
+    .nav-dropdown-menu a{padding:14px 22px 14px 36px;border-radius:0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  }
 
   .admin-banner{background:var(--accent-deep);color:#fff;text-align:center;font-size:12px;letter-spacing:.03em;padding:9px;display:none;}
   .admin-banner.show{display:block;}
@@ -180,7 +235,7 @@
     transition:transform .35s var(--ease),box-shadow .35s var(--ease);}
   .gallery-grid .photo-mount:hover{transform:translateY(-6px);box-shadow:0 22px 40px -16px rgba(92,27,59,.32);}
   .photo-frame{position:relative;overflow:hidden;}
-  .photo-frame img{width:100%;display:block;aspect-ratio:3/4;object-fit:contain;background:var(--card);transition:transform .5s var(--ease);}
+  .photo-frame img{width:100%;display:block;aspect-ratio:3/4;object-fit:cover;transition:transform .5s var(--ease);}
   .photo-frame:hover img{transform:scale(1.08);}
   .hover-caption{
     position:absolute;left:0;right:0;bottom:0;
@@ -203,12 +258,14 @@
   .view-more-wrap{text-align:center;margin-top:40px;}
 
   @media (max-width:900px){ .gallery-grid{grid-template-columns:repeat(2,1fr);} }
-  @media (max-width:560px){ .gallery-grid{grid-template-columns:1fr;} }
+  @media (max-width:560px){ .gallery-grid{gap:12px;} }
+  @media (max-width:420px){ .gallery-grid{gap:9px;} }
 
   /* Events gallery — landscape, bigger tiles */
   .event-gallery-grid{grid-template-columns:repeat(2,1fr);gap:32px;max-width:1300px;}
   .event-photo-frame img{aspect-ratio:16/9;}
-  @media (max-width:900px){ .event-gallery-grid{grid-template-columns:1fr;} }
+  @media (max-width:900px){ .event-gallery-grid{grid-template-columns:1fr;gap:18px;} }
+  @media (max-width:420px){ .event-gallery-grid{gap:12px;} }
 
   #eventSubtitle.placeholder{color:var(--ink-faint);font-style:italic;}
   .admin-on #eventSubtitle{cursor:pointer;border-bottom:1px dashed var(--line);display:inline-block;min-height:1.4em;}
@@ -327,13 +384,11 @@
     .hero-inner{grid-template-columns:1fr;}
     .hero-right{justify-self:stretch;width:100%;max-width:440px;margin:20px auto 0;}
     #about .about-grid, .contact-grid{grid-template-columns:1fr;}
-    .nav-inner{padding:16px 20px;}
+    .nav-inner{padding:14px 20px;}
     section{padding:56px 20px;}
-    .nav-links{gap:16px;font-size:11px;}
   }
 
   @media (max-width:420px){
-    .nav-links{gap:10px;font-size:10px;}
     .brand-name{font-size:19px;}
     section{padding:44px 16px;}
     .modal{width:min(290px,86vw);}
@@ -352,13 +407,23 @@
         <div class="brand-sub" id="brandSubEl">Making every moment pop</div>
       </div>
     </div>
-    <div class="nav-links">
-      <a href="#">Home</a>
-      <a href="#gallery">Gallery</a>
-      <a href="#events">Events</a>
-      <a href="#about">About Us</a>
-      <a href="#contact">Contact Us</a>
+    <div class="nav-links" id="navLinks">
+      <a class="nav-item" href="#">Home</a>
+      <div class="nav-dropdown" id="galleryDropdown">
+        <button class="nav-item nav-dropdown-trigger" id="galleryDropdownTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+          Gallery <span class="caret">▾</span>
+        </button>
+        <div class="nav-dropdown-menu" id="galleryDropdownMenu">
+          <a href="#gallery">Our Creations</a>
+          <a href="#events">Events &amp; Installations</a>
+        </div>
+      </div>
+      <a class="nav-item" href="#about">About Us</a>
+      <a class="nav-item" href="#contact">Contact Us</a>
     </div>
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
   </div>
   <div class="admin-banner" id="adminBanner">
     Editing mode — changes are visible to everyone who visits this page
@@ -687,6 +752,56 @@
     eventGallery.applyAdminState(isAdmin);
     document.getElementById("portraitUploadBtn").style.display = isAdmin ? "inline-flex" : "none";
   }
+
+  // ---------- Nav dropdown ----------
+  (function(){
+    var dropdown = document.getElementById("galleryDropdown");
+    var trigger = document.getElementById("galleryDropdownTrigger");
+    function closeDropdown(){
+      dropdown.classList.remove("open");
+      trigger.setAttribute("aria-expanded", "false");
+    }
+    trigger.addEventListener("click", function(e){
+      e.stopPropagation();
+      var open = dropdown.classList.toggle("open");
+      trigger.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    dropdown.querySelectorAll(".nav-dropdown-menu a").forEach(function(a){
+      a.addEventListener("click", closeDropdown);
+    });
+    document.addEventListener("click", function(e){
+      if (!dropdown.contains(e.target)) closeDropdown();
+    });
+    document.addEventListener("keydown", function(e){
+      if (e.key === "Escape") closeDropdown();
+    });
+  })();
+
+  // ---------- Mobile hamburger nav ----------
+  (function(){
+    var navToggle = document.getElementById("navToggle");
+    var navLinks = document.getElementById("navLinks");
+    function closeNavPanel(){
+      navLinks.classList.remove("open");
+      navToggle.classList.remove("open");
+      navToggle.setAttribute("aria-expanded", "false");
+    }
+    navToggle.addEventListener("click", function(e){
+      e.stopPropagation();
+      var open = navLinks.classList.toggle("open");
+      navToggle.classList.toggle("open", open);
+      navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    navLinks.querySelectorAll("a").forEach(function(a){
+      a.addEventListener("click", closeNavPanel);
+    });
+    document.addEventListener("click", function(e){
+      if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) closeNavPanel();
+    });
+    document.addEventListener("keydown", function(e){
+      if (e.key === "Escape") closeNavPanel();
+    });
+  })();
 
   function openSigninModal(){
     document.getElementById("signinModal").classList.add("open");
