@@ -398,7 +398,8 @@
   }
 
   @media (max-width:760px){
-    .hero-inner{grid-template-columns:1fr;}
+    .hero{min-height:0;}
+    .hero-inner{grid-template-columns:1fr;padding:40px 20px 32px;}
     .hero-right{justify-self:stretch;width:100%;max-width:440px;margin:20px auto 0;}
     #about .about-grid, .contact-grid{grid-template-columns:1fr;}
     #about .about-grid{gap:22px;}
@@ -408,6 +409,7 @@
   }
 
   @media (max-width:420px){
+    .hero-inner{padding:32px 16px 24px;}
     #about .about-portrait{max-width:210px;}
     .brand-name{font-size:19px;}
     section{padding:44px 16px;}
