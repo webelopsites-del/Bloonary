@@ -7,10 +7,14 @@ const DEFAULT_ABOUT =
   "At Bloonery, we believe every celebration deserves that extra touch. From elegant balloon arrangements to fun and creative setups, we design décor that brings your moments to life.\n\nWhether it's a birthday, baby shower, wedding or any special occasion, we're here to make it pop!";
 const DEFAULT_CONTACT = { phone: "07956 123456", whatsapp: "07956 123456", email: "hello@bloonery.com", location: "Stamford Hill, London", instagram: "@bloonery.events" };
 const DEFAULT_BRAND = { name: "Bloonery", sub: "Making every moment pop" };
+const DEFAULT_GALLERY_SUBTITLE = "Every arrangement tells its own story.";
+const DEFAULT_EVENT_SUBTITLE = "";
 
 const MAX_ABOUT_LEN = 4000;
 const MAX_FIELD_LEN = 200;
 const MAX_BRAND_LEN = 60;
+const MAX_GALLERY_SUBTITLE_LEN = 200;
+const MAX_EVENT_SUBTITLE_LEN = 500;
 const DATA_URL_RE = /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/;
 
 function sanitizeText(s, max) {
@@ -43,7 +47,7 @@ module.exports = withHandler(async (req, res) => {
   res.setHeader("Content-Type", "application/json");
 
   if (req.method === "GET") {
-    const [about, contact, hero1, hero2, hero3, portrait, brand] = await Promise.all([
+    const [about, contact, hero1, hero2, hero3, portrait, brand, gallerySubtitle, eventSubtitle] = await Promise.all([
       store.get("about", DEFAULT_ABOUT),
       store.get("contact", DEFAULT_CONTACT),
       store.get("hero1", null),
@@ -51,8 +55,10 @@ module.exports = withHandler(async (req, res) => {
       store.get("hero3", null),
       store.get("portrait", null),
       store.get("brand", DEFAULT_BRAND),
+      store.get("gallerySubtitle", DEFAULT_GALLERY_SUBTITLE),
+      store.get("eventSubtitle", DEFAULT_EVENT_SUBTITLE),
     ]);
-    return res.end(JSON.stringify({ about, contact, hero1, hero2, hero3, portrait, brand }));
+    return res.end(JSON.stringify({ about, contact, hero1, hero2, hero3, portrait, brand, gallerySubtitle, eventSubtitle }));
   }
 
   if (req.method === "PUT") {
@@ -61,6 +67,15 @@ module.exports = withHandler(async (req, res) => {
 
     if (typeof body.about === "string") {
       await store.set("about", sanitizeText(body.about, MAX_ABOUT_LEN));
+    }
+
+    if (typeof body.gallerySubtitle === "string") {
+      const subtitle = sanitizeText(body.gallerySubtitle, MAX_GALLERY_SUBTITLE_LEN).trim();
+      await store.set("gallerySubtitle", subtitle || DEFAULT_GALLERY_SUBTITLE);
+    }
+
+    if (typeof body.eventSubtitle === "string") {
+      await store.set("eventSubtitle", sanitizeText(body.eventSubtitle, MAX_EVENT_SUBTITLE_LEN).trim());
     }
 
     if (body.contact && typeof body.contact === "object") {
@@ -107,14 +122,16 @@ module.exports = withHandler(async (req, res) => {
       await clearImageField("portrait");
     }
 
-    const [hero1, hero2, hero3, portrait, brand] = await Promise.all([
+    const [hero1, hero2, hero3, portrait, brand, gallerySubtitle, eventSubtitle] = await Promise.all([
       store.get("hero1", null),
       store.get("hero2", null),
       store.get("hero3", null),
       store.get("portrait", null),
       store.get("brand", DEFAULT_BRAND),
+      store.get("gallerySubtitle", DEFAULT_GALLERY_SUBTITLE),
+      store.get("eventSubtitle", DEFAULT_EVENT_SUBTITLE),
     ]);
-    return res.end(JSON.stringify({ ok: true, hero1, hero2, hero3, portrait, brand }));
+    return res.end(JSON.stringify({ ok: true, hero1, hero2, hero3, portrait, brand, gallerySubtitle, eventSubtitle }));
   }
 
   res.statusCode = 405;

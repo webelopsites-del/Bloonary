@@ -134,8 +134,8 @@
   .section-head p{color:var(--ink-muted);font-size:13.5px;}
 
   /* About */
-  #about{background:var(--cream-2);position:relative;overflow:hidden;}
-  #gallery,#contact{position:relative;overflow:hidden;}
+  #about{background:var(--blue-bg);position:relative;overflow:hidden;}
+  #gallery,#events,#contact{position:relative;overflow:hidden;}
   #about .about-grid{display:grid;grid-template-columns:.7fr 1.3fr;gap:52px;align-items:center;max-width:960px;margin:0 auto;}
   .about-portrait{
     aspect-ratio:4/5;border-radius:var(--radius);position:relative;overflow:hidden;
@@ -153,6 +153,7 @@
 
   /* Gallery */
   #gallery{background:var(--blue-bg);}
+  #events{background:var(--cream-2);}
   .gallery-toolbar{
     max-width:1000px;margin:0 auto 24px;display:none;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;
     background:var(--card);border:1px solid var(--line-blue);border-radius:12px;padding:16px 18px;
@@ -189,6 +190,7 @@
   }
   .hover-caption .cap-price{font-size:12px;letter-spacing:.02em;text-transform:none;margin-top:4px;font-weight:700;color:var(--accent);}
   .admin-on .photo-frame{cursor:pointer;}
+  .admin-on #gallerySubtitle{cursor:pointer;border-bottom:1px dashed var(--line);display:inline-block;}
 
   .photo-delete{
     position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
@@ -203,16 +205,44 @@
   @media (max-width:900px){ .gallery-grid{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:560px){ .gallery-grid{grid-template-columns:1fr;} }
 
+  /* Events gallery — landscape, bigger tiles */
+  .event-gallery-grid{grid-template-columns:repeat(2,1fr);gap:32px;max-width:1300px;}
+  .event-photo-frame img{aspect-ratio:16/9;}
+  @media (max-width:900px){ .event-gallery-grid{grid-template-columns:1fr;} }
+
+  #eventSubtitle.placeholder{color:var(--ink-faint);font-style:italic;}
+  .admin-on #eventSubtitle{cursor:pointer;border-bottom:1px dashed var(--line);display:inline-block;min-height:1.4em;}
+
   /* Lightbox */
   .lightbox{position:fixed;inset:0;background:rgba(43,12,26,.92);display:none;align-items:center;justify-content:center;z-index:200;padding:40px;
-    opacity:0;transition:opacity .25s var(--ease);}
+    opacity:0;transition:opacity .25s var(--ease);touch-action:pan-y;}
   .lightbox.open{display:flex;opacity:1;}
-  .lightbox img{max-width:90vw;max-height:82vh;border-radius:8px;transform:scale(.94);transition:transform .3s var(--ease);}
+  .lightbox img{max-width:90vw;max-height:82vh;border-radius:8px;transform:scale(.94);transition:transform .3s var(--ease);user-select:none;-webkit-user-drag:none;}
   .lightbox.open img{transform:scale(1);}
-  .lightbox-close{position:absolute;top:24px;right:32px;color:#fff;font-size:30px;cursor:pointer;background:none;border:none;transition:transform .2s var(--ease),opacity .2s;}
+  .lightbox-close{position:absolute;top:24px;right:32px;color:#fff;font-size:30px;cursor:pointer;background:none;border:none;transition:transform .2s var(--ease),opacity .2s;z-index:6;}
   .lightbox-close:hover{transform:rotate(90deg);opacity:.8;}
   .lightbox-cap{color:#F6D9E7;font-size:12.5px;letter-spacing:.04em;margin-top:16px;text-align:center;}
   .lightbox-cap .cat{color:var(--accent);}
+
+  .lightbox-nav{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:48px;height:48px;border-radius:50%;flex:none;
+    background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.4);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:26px;line-height:1;
+    cursor:pointer;z-index:5;transition:background .2s var(--ease),transform .2s var(--ease);
+  }
+  .lightbox-nav:hover{background:rgba(255,255,255,.28);}
+  .lightbox-nav:active{transform:translateY(-50%) scale(.9);}
+  .lightbox-nav[hidden]{display:none;}
+  .lightbox-prev{left:16px;}
+  .lightbox-next{right:16px;}
+  @media (max-width:760px){
+    .lightbox{padding:16px 8px;}
+    .lightbox-close{top:12px;right:14px;font-size:26px;}
+    .lightbox-nav{width:40px;height:40px;font-size:22px;}
+    .lightbox-prev{left:4px;}
+    .lightbox-next{right:4px;}
+  }
 
   /* Contact — centered header + horizontal icon row */
   #contact{background:var(--cream-2);}
@@ -324,8 +354,9 @@
     </div>
     <div class="nav-links">
       <a href="#">Home</a>
-      <a href="#about">About Us</a>
       <a href="#gallery">Gallery</a>
+      <a href="#events">Events</a>
+      <a href="#about">About Us</a>
       <a href="#contact">Contact Us</a>
     </div>
   </div>
@@ -367,6 +398,58 @@
   </div>
 </header>
 
+<section id="gallery">
+  <div class="hero-decor" aria-hidden="true"></div>
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Gallery</span><div class="flourish-line"></div></div>
+      <h2>Our Creations</h2>
+      <p id="gallerySubtitle"></p>
+    </div>
+
+    <div class="gallery-toolbar" id="galleryToolbar">
+      <span class="toolbar-label">Category</span>
+      <select id="categorySelect"></select>
+      <input type="text" id="newCategoryInput" placeholder="New category name" style="display:none;">
+      <label class="btn small" for="fileInput" style="cursor:pointer;">+ Add photos</label>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+      <span id="uploadStatus" style="font-size:12px;color:var(--ink-muted);"></span>
+    </div>
+
+    <div class="filter-pills" id="filterPills"></div>
+    <div id="galleryGrid"></div>
+    <div class="view-more-wrap" id="viewMoreWrap" style="display:none;">
+      <button class="btn outline" id="viewMoreBtn">View more →</button>
+    </div>
+  </div>
+</section>
+
+<section id="events">
+  <div class="hero-decor" aria-hidden="true"></div>
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Events</span><div class="flourish-line"></div></div>
+      <h2>Events &amp; Installations</h2>
+      <p id="eventSubtitle"></p>
+    </div>
+
+    <div class="gallery-toolbar" id="eventGalleryToolbar">
+      <span class="toolbar-label">Category</span>
+      <select id="eventCategorySelect"></select>
+      <input type="text" id="eventNewCategoryInput" placeholder="New category name" style="display:none;">
+      <label class="btn small" for="eventFileInput" style="cursor:pointer;">+ Add photos</label>
+      <input type="file" id="eventFileInput" accept="image/*" multiple style="display:none;">
+      <span id="eventUploadStatus" style="font-size:12px;color:var(--ink-muted);"></span>
+    </div>
+
+    <div class="filter-pills" id="eventFilterPills"></div>
+    <div id="eventGalleryGrid"></div>
+    <div class="view-more-wrap" id="eventViewMoreWrap" style="display:none;">
+      <button class="btn outline" id="eventViewMoreBtn">View more →</button>
+    </div>
+  </div>
+</section>
+
 <section id="about">
   <div class="hero-decor" aria-hidden="true">
   </div>
@@ -390,32 +473,6 @@
         <p class="about-text" id="aboutText"></p>
         <div class="edit-controls" id="aboutEditControls" style="display:none;"></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section id="gallery">
-  <div class="hero-decor" aria-hidden="true"></div>
-  <div class="section-inner">
-    <div class="section-head reveal">
-      <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Gallery</span><div class="flourish-line"></div></div>
-      <h2>Our Creations</h2>
-      <p>Every arrangement tells its own story.</p>
-    </div>
-
-    <div class="gallery-toolbar" id="galleryToolbar">
-      <span class="toolbar-label">Category</span>
-      <select id="categorySelect"></select>
-      <input type="text" id="newCategoryInput" placeholder="New category name" style="display:none;">
-      <label class="btn small" for="fileInput" style="cursor:pointer;">+ Add photos</label>
-      <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
-      <span id="uploadStatus" style="font-size:12px;color:var(--ink-muted);"></span>
-    </div>
-
-    <div class="filter-pills" id="filterPills"></div>
-    <div id="galleryGrid"></div>
-    <div class="view-more-wrap" id="viewMoreWrap" style="display:none;">
-      <button class="btn outline" id="viewMoreBtn">View more →</button>
     </div>
   </div>
 </section>
@@ -448,6 +505,8 @@
 
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose">×</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">›</button>
   <div>
     <img id="lightboxImg" src="" alt="">
     <div class="lightbox-cap" id="lightboxCap"></div>
@@ -490,7 +549,6 @@
 
   var isAdmin = false;
   var aboutText = "";
-  var photos = [];
   var contact = {
     instagramHandle: "BlooneryUK",
     instagramUrl: "https://www.instagram.com/reel/DZLYDV9IoLQ/?igsi=YnMxOTFmMnQ0OGlk",
@@ -505,8 +563,8 @@
   var heroImages = [null, null, null];
   var portraitImage = null;
   var brand = { name: "Bloonery", sub: "Making every moment pop" };
-  var currentFilter = "All";
-  var visibleCount = PAGE_SIZE;
+  var gallerySubtitle = "Every arrangement tells its own story.";
+  var eventSubtitle = "";
 
   var prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var revealObserver = (!prefersReducedMotion && "IntersectionObserver" in window)
@@ -579,7 +637,8 @@
     Promise.all([
       api("/api/session").catch(function(){ return { isAdmin: false }; }),
       api("/api/content").catch(function(){ return null; }),
-      api("/api/photos").catch(function(){ return null; })
+      mainGallery.load(),
+      eventGallery.load()
     ]).then(function(results){
       isAdmin = !!(results[0] && results[0].isAdmin);
       if (results[1]){
@@ -587,12 +646,15 @@
         heroImages = [results[1].hero1 || null, results[1].hero2 || null, results[1].hero3 || null];
         portraitImage = results[1].portrait || null;
         brand = results[1].brand || brand;
+        gallerySubtitle = results[1].gallerySubtitle || gallerySubtitle;
+        eventSubtitle = results[1].eventSubtitle || "";
       }
-      if (results[2] && Array.isArray(results[2])) photos = results[2];
       renderAll();
     });
   }
   function saveAbout(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ about: aboutText }) }); }
+  function saveGallerySubtitle(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ gallerySubtitle: gallerySubtitle }) }); }
+  function saveEventSubtitle(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ eventSubtitle: eventSubtitle }) }); }
   function saveHeroSlot(index, dataUrl){
     var key = "hero" + (index + 1);
     var body = {}; body[key] = dataUrl;
@@ -621,7 +683,8 @@
     document.body.classList.toggle("admin-on", isAdmin);
     document.getElementById("adminBanner").classList.toggle("show", isAdmin);
     document.getElementById("brandTrigger").title = isAdmin ? "Edit site name" : "Owner access";
-    document.getElementById("galleryToolbar").classList.toggle("show", isAdmin);
+    mainGallery.applyAdminState(isAdmin);
+    eventGallery.applyAdminState(isAdmin);
     document.getElementById("portraitUploadBtn").style.display = isAdmin ? "inline-flex" : "none";
   }
 
@@ -805,145 +868,63 @@
     textarea.focus();
   }
 
-  // ---------- Categories ----------
-  function getCategories(){
-    var set = {};
-    photos.forEach(function(p){ set[p.category || UNCATEGORIZED] = true; });
-    return Object.keys(set).sort();
-  }
-  function syncNewCategoryVisibility(focus){
-    var sel = document.getElementById("categorySelect");
-    var newInput = document.getElementById("newCategoryInput");
-    var isNew = sel.value === "__new__";
-    newInput.style.display = isNew ? "inline-block" : "none";
-    if (isNew && focus) newInput.focus();
-  }
-  function renderCategorySelect(){
-    var sel = document.getElementById("categorySelect");
-    var cats = getCategories();
-    sel.innerHTML = "";
-    cats.forEach(function(c){
-      var opt = document.createElement("option"); opt.value = c; opt.textContent = c; sel.appendChild(opt);
-    });
-    var newOpt = document.createElement("option"); newOpt.value = "__new__"; newOpt.textContent = "+ New category…";
-    sel.appendChild(newOpt);
-    if (cats.length === 0) sel.value = "__new__";
-    syncNewCategoryVisibility(false);
-  }
-  document.getElementById("categorySelect").addEventListener("change", function(){
-    syncNewCategoryVisibility(true);
-  });
-  function currentUploadCategory(){
-    var sel = document.getElementById("categorySelect");
-    if (sel.value === "__new__"){
-      var typed = document.getElementById("newCategoryInput").value.trim();
-      return typed || UNCATEGORIZED;
-    }
-    return sel.value || UNCATEGORIZED;
-  }
-
-  function renderFilterPills(){
-    var wrap = document.getElementById("filterPills");
-    wrap.innerHTML = "";
-    var cats = getCategories();
-    if (cats.length === 0) return;
-    var all = ["All"].concat(cats);
-    all.forEach(function(c){
-      var pill = document.createElement("div");
-      pill.className = "pill" + (currentFilter === c ? " active" : "");
-      pill.textContent = c;
-      pill.addEventListener("click", function(){ currentFilter = c; visibleCount = PAGE_SIZE; renderGallery(); });
-      wrap.appendChild(pill);
-    });
-  }
-
-  // ---------- Gallery ----------
-  function renderGallery(){
-    renderFilterPills();
-    var grid = document.getElementById("galleryGrid");
-    grid.innerHTML = "";
-
-    var filtered = photos.filter(function(p){
-      return currentFilter === "All" || (p.category || UNCATEGORIZED) === currentFilter;
-    }).slice().reverse();
-
-    if (filtered.length === 0){
-      var empty = document.createElement("div");
-      empty.className = "gallery-empty";
-      empty.textContent = photos.length === 0
-        ? (isAdmin ? "No creations yet — use \"Add photos\" above to upload your first ones." : "No creations yet — check back soon.")
-        : "No creations in this category yet.";
-      grid.appendChild(empty);
-      document.getElementById("viewMoreWrap").style.display = "none";
-      return;
-    }
-
-    var visible = filtered.slice(0, visibleCount);
-    var wrap = document.createElement("div");
-    wrap.className = "gallery-grid";
-    visible.forEach(function(p, i){
-      var mount = document.createElement("div");
-      mount.className = "photo-mount reveal";
-      mount.style.transitionDelay = (Math.min(i, 8) * 0.06) + "s";
-      var frame = document.createElement("div");
-      frame.className = "photo-frame";
-      var img = document.createElement("img");
-      img.src = p.url; img.alt = p.caption || "Gallery photo";
-      frame.appendChild(img);
-      var cap = document.createElement("div");
-      cap.className = "hover-caption";
-      cap.innerHTML = '<div class="cap-category">' + escapeHtml(p.category || UNCATEGORIZED) + '</div>' +
-        (p.price ? '<div class="cap-price">' + escapeHtml(p.price) + '</div>' : "");
-      frame.appendChild(cap);
-      frame.addEventListener("click", function(e){
-        if (isAdmin){
-          e.stopPropagation();
-          promptPrice(p);
-          return;
-        }
-        openLightbox(p);
-      });
-      mount.appendChild(frame);
-
-      var del = document.createElement("button");
-      del.className = "photo-delete"; del.textContent = "×";
-      del.addEventListener("click", function(e){
-        e.stopPropagation();
-        api("/api/photos?id=" + encodeURIComponent(p.id), { method: "DELETE" }).then(function(){
-          photos = photos.filter(function(x){ return x.id !== p.id; });
-          renderCategorySelect(); renderGallery();
-        }).catch(function(){});
-      });
-      mount.appendChild(del);
-      wrap.appendChild(mount);
-      observeReveal(mount);
-    });
-    grid.appendChild(wrap);
-
-    document.getElementById("viewMoreWrap").style.display = filtered.length > visibleCount ? "block" : "none";
-  }
-  document.getElementById("viewMoreBtn").addEventListener("click", function(){
-    visibleCount += PAGE_SIZE; renderGallery();
-  });
-
-  function openLightbox(p){
+  // ---------- Lightbox (shared, with prev/next navigation) ----------
+  var lightboxList = [];
+  var lightboxIndex = 0;
+  function renderLightboxPhoto(){
+    var p = lightboxList[lightboxIndex];
+    if (!p) return;
     document.getElementById("lightboxImg").src = p.url;
     document.getElementById("lightboxCap").innerHTML = '<span class="cat">' + escapeHtml(p.category || UNCATEGORIZED) + '</span>' +
       (p.price ? ' &middot; ' + escapeHtml(p.price) : "");
+    var multi = lightboxList.length > 1;
+    document.getElementById("lightboxPrev").hidden = !multi;
+    document.getElementById("lightboxNext").hidden = !multi;
+  }
+  function lightboxStep(delta){
+    if (!lightboxList.length) return;
+    lightboxIndex = (lightboxIndex + delta + lightboxList.length) % lightboxList.length;
+    renderLightboxPhoto();
+  }
+  function openLightbox(list, index){
+    lightboxList = list;
+    lightboxIndex = index;
+    renderLightboxPhoto();
     document.getElementById("lightbox").classList.add("open");
   }
-
-  function promptPrice(p){
-    var next = window.prompt("Set the price shown on this photo (leave blank to remove):", p.price || "");
-    if (next === null) return;
-    next = next.trim();
-    api("/api/photos", { method: "PUT", body: JSON.stringify({ id: p.id, price: next }) }).then(function(res){
-      p.price = res.price || "";
-      renderGallery();
-    }).catch(function(){});
+  function closeLightbox(){
+    document.getElementById("lightbox").classList.remove("open");
   }
-  document.getElementById("lightboxClose").addEventListener("click", function(){ document.getElementById("lightbox").classList.remove("open"); });
-  document.getElementById("lightbox").addEventListener("click", function(e){ if (e.target.id === "lightbox") document.getElementById("lightbox").classList.remove("open"); });
+  document.getElementById("lightboxClose").addEventListener("click", closeLightbox);
+  document.getElementById("lightbox").addEventListener("click", function(e){ if (e.target.id === "lightbox") closeLightbox(); });
+  document.getElementById("lightboxPrev").addEventListener("click", function(e){ e.stopPropagation(); lightboxStep(-1); });
+  document.getElementById("lightboxNext").addEventListener("click", function(e){ e.stopPropagation(); lightboxStep(1); });
+  document.addEventListener("keydown", function(e){
+    if (!document.getElementById("lightbox").classList.contains("open")) return;
+    if (e.key === "ArrowLeft") lightboxStep(-1);
+    else if (e.key === "ArrowRight") lightboxStep(1);
+    else if (e.key === "Escape") closeLightbox();
+  });
+  (function(){
+    var startX = 0, startY = 0, tracking = false;
+    var lightboxEl = document.getElementById("lightbox");
+    lightboxEl.addEventListener("touchstart", function(e){
+      if (e.touches.length !== 1) return;
+      tracking = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    lightboxEl.addEventListener("touchend", function(e){
+      if (!tracking) return;
+      tracking = false;
+      var touch = e.changedTouches[0];
+      var dx = touch.clientX - startX;
+      var dy = touch.clientY - startY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5){
+        lightboxStep(dx > 0 ? -1 : 1);
+      }
+    }, { passive: true });
+  })();
 
   function compressImage(file){
     return new Promise(function(resolve, reject){
@@ -969,47 +950,260 @@
     });
   }
 
-  document.getElementById("fileInput").addEventListener("change", function(e){
-    var files = Array.prototype.slice.call(e.target.files || []);
-    if (files.length === 0) return;
-    var category = currentUploadCategory();
-    var statusEl = document.getElementById("uploadStatus");
-    var succeeded = 0, failed = 0, attempted = 0;
-    var lastError = "";
-    statusEl.style.color = "";
-    statusEl.textContent = "Uploading 0/" + files.length + "…";
-    var chain = Promise.resolve();
-    files.forEach(function(file){
-      chain = chain.then(function(){
-        return compressImage(file).then(function(dataUrl){
-          var caption = file.name.replace(/\.[^.]+$/,"");
-          return api("/api/photos", { method: "POST", body: JSON.stringify({ dataUrl: dataUrl, caption: caption, category: category }) });
-        }).then(function(photo){
-          photos.push(photo);
-          succeeded++;
-        }).catch(function(err){
-          failed++;
-          lastError = (err && err.message) ? err.message : "unknown error";
-        }).then(function(){
-          attempted++;
-          statusEl.textContent = "Uploading " + attempted + "/" + files.length + "…";
+  function renderGallerySubtitle(){
+    document.getElementById("gallerySubtitle").textContent = gallerySubtitle;
+  }
+  document.getElementById("gallerySubtitle").addEventListener("click", function(){
+    if (!isAdmin) return;
+    var next = window.prompt("Edit the text under \"Our Creations\":", gallerySubtitle);
+    if (next === null) return;
+    next = next.trim();
+    if (!next) return;
+    gallerySubtitle = next;
+    saveGallerySubtitle().catch(function(){});
+    renderGallerySubtitle();
+  });
+
+  function renderEventSubtitle(){
+    var el = document.getElementById("eventSubtitle");
+    if (eventSubtitle){
+      el.textContent = eventSubtitle;
+      el.classList.remove("placeholder");
+      el.style.display = "";
+    } else if (isAdmin){
+      el.textContent = "Click to add a description…";
+      el.classList.add("placeholder");
+      el.style.display = "";
+    } else {
+      el.textContent = "";
+      el.style.display = "none";
+    }
+  }
+  document.getElementById("eventSubtitle").addEventListener("click", function(){
+    if (!isAdmin) return;
+    var next = window.prompt("Edit the text under \"Events & Installations\" (leave blank to remove):", eventSubtitle);
+    if (next === null) return;
+    eventSubtitle = next.trim();
+    saveEventSubtitle().catch(function(){});
+    renderEventSubtitle();
+  });
+
+  // ---------- Gallery (shared factory: powers both the main and events galleries) ----------
+  function createGallery(opts){
+    var photos = [];
+    var currentFilter = "All";
+    var visibleCount = PAGE_SIZE;
+    var ids = opts.ids;
+
+    function byId(id){ return document.getElementById(id); }
+
+    function getCategories(){
+      var set = {};
+      photos.forEach(function(p){ set[p.category || UNCATEGORIZED] = true; });
+      return Object.keys(set).sort();
+    }
+    function syncNewCategoryVisibility(focus){
+      var sel = byId(ids.categorySelect);
+      var newInput = byId(ids.newCategoryInput);
+      var isNew = sel.value === "__new__";
+      newInput.style.display = isNew ? "inline-block" : "none";
+      if (isNew && focus) newInput.focus();
+    }
+    function renderCategorySelect(){
+      var sel = byId(ids.categorySelect);
+      var cats = getCategories();
+      sel.innerHTML = "";
+      cats.forEach(function(c){
+        var opt = document.createElement("option"); opt.value = c; opt.textContent = c; sel.appendChild(opt);
+      });
+      var newOpt = document.createElement("option"); newOpt.value = "__new__"; newOpt.textContent = "+ New category…";
+      sel.appendChild(newOpt);
+      if (cats.length === 0) sel.value = "__new__";
+      syncNewCategoryVisibility(false);
+    }
+    function currentUploadCategory(){
+      var sel = byId(ids.categorySelect);
+      if (sel.value === "__new__"){
+        var typed = byId(ids.newCategoryInput).value.trim();
+        return typed || UNCATEGORIZED;
+      }
+      return sel.value || UNCATEGORIZED;
+    }
+    function renderFilterPills(){
+      var wrap = byId(ids.filterPills);
+      wrap.innerHTML = "";
+      var cats = getCategories();
+      if (cats.length === 0) return;
+      var all = ["All"].concat(cats);
+      all.forEach(function(c){
+        var pill = document.createElement("div");
+        pill.className = "pill" + (currentFilter === c ? " active" : "");
+        pill.textContent = c;
+        pill.addEventListener("click", function(){ currentFilter = c; visibleCount = PAGE_SIZE; renderGallery(); });
+        wrap.appendChild(pill);
+      });
+    }
+    function promptPrice(p){
+      var next = window.prompt("Set the price shown on this photo (leave blank to remove):", p.price || "");
+      if (next === null) return;
+      next = next.trim();
+      api(opts.apiPath, { method: "PUT", body: JSON.stringify({ id: p.id, price: next }) }).then(function(res){
+        p.price = res.price || "";
+        renderGallery();
+      }).catch(function(){});
+    }
+    function renderGallery(){
+      renderFilterPills();
+      var grid = byId(ids.grid);
+      grid.innerHTML = "";
+
+      var filtered = photos.filter(function(p){
+        return currentFilter === "All" || (p.category || UNCATEGORIZED) === currentFilter;
+      }).slice().reverse();
+
+      if (filtered.length === 0){
+        var empty = document.createElement("div");
+        empty.className = "gallery-empty";
+        empty.textContent = photos.length === 0
+          ? (isAdmin ? opts.emptyAdminText : opts.emptyVisitorText)
+          : "Nothing in this category yet.";
+        grid.appendChild(empty);
+        byId(ids.viewMoreWrap).style.display = "none";
+        return;
+      }
+
+      var visible = filtered.slice(0, visibleCount);
+      var wrap = document.createElement("div");
+      wrap.className = "gallery-grid" + (opts.gridClass ? " " + opts.gridClass : "");
+      visible.forEach(function(p, i){
+        var mount = document.createElement("div");
+        mount.className = "photo-mount reveal";
+        mount.style.transitionDelay = (Math.min(i, 8) * 0.06) + "s";
+        var frame = document.createElement("div");
+        frame.className = "photo-frame" + (opts.frameClass ? " " + opts.frameClass : "");
+        var img = document.createElement("img");
+        img.src = p.url; img.alt = p.caption || "Gallery photo";
+        frame.appendChild(img);
+        var cap = document.createElement("div");
+        cap.className = "hover-caption";
+        cap.innerHTML = '<div class="cap-category">' + escapeHtml(p.category || UNCATEGORIZED) + '</div>' +
+          (p.price ? '<div class="cap-price">' + escapeHtml(p.price) + '</div>' : "");
+        frame.appendChild(cap);
+        frame.addEventListener("click", function(e){
+          if (isAdmin){
+            e.stopPropagation();
+            promptPrice(p);
+            return;
+          }
+          openLightbox(filtered, i);
+        });
+        mount.appendChild(frame);
+
+        var del = document.createElement("button");
+        del.className = "photo-delete"; del.textContent = "×";
+        del.addEventListener("click", function(e){
+          e.stopPropagation();
+          api(opts.apiPath + "?id=" + encodeURIComponent(p.id), { method: "DELETE" }).then(function(){
+            photos = photos.filter(function(x){ return x.id !== p.id; });
+            renderCategorySelect(); renderGallery();
+          }).catch(function(){});
+        });
+        mount.appendChild(del);
+        wrap.appendChild(mount);
+        observeReveal(mount);
+      });
+      grid.appendChild(wrap);
+
+      byId(ids.viewMoreWrap).style.display = filtered.length > visibleCount ? "block" : "none";
+    }
+
+    byId(ids.viewMoreBtn).addEventListener("click", function(){
+      visibleCount += PAGE_SIZE; renderGallery();
+    });
+    byId(ids.categorySelect).addEventListener("change", function(){
+      syncNewCategoryVisibility(true);
+    });
+    byId(ids.fileInput).addEventListener("change", function(e){
+      var files = Array.prototype.slice.call(e.target.files || []);
+      if (files.length === 0) return;
+      var category = currentUploadCategory();
+      var statusEl = byId(ids.uploadStatus);
+      var succeeded = 0, failed = 0, attempted = 0;
+      var lastError = "";
+      statusEl.style.color = "";
+      statusEl.textContent = "Uploading 0/" + files.length + "…";
+      var chain = Promise.resolve();
+      files.forEach(function(file){
+        chain = chain.then(function(){
+          return compressImage(file).then(function(dataUrl){
+            var caption = file.name.replace(/\.[^.]+$/,"");
+            return api(opts.apiPath, { method: "POST", body: JSON.stringify({ dataUrl: dataUrl, caption: caption, category: category }) });
+          }).then(function(photo){
+            photos.push(photo);
+            succeeded++;
+          }).catch(function(err){
+            failed++;
+            lastError = (err && err.message) ? err.message : "unknown error";
+          }).then(function(){
+            attempted++;
+            statusEl.textContent = "Uploading " + attempted + "/" + files.length + "…";
+          });
         });
       });
+      chain.then(function(){
+        renderCategorySelect(); renderGallery();
+        if (failed === 0){
+          statusEl.style.color = "";
+          statusEl.textContent = "Added " + succeeded + " photo" + (succeeded===1?"":"s") + " to \"" + category + "\".";
+          setTimeout(function(){ statusEl.textContent = ""; }, 3000);
+        } else {
+          statusEl.style.color = "var(--danger)";
+          statusEl.textContent = succeeded + " of " + files.length + " uploaded — " + failed + " failed: " + lastError;
+        }
+        e.target.value = "";
+        byId(ids.newCategoryInput).value = "";
+        byId(ids.newCategoryInput).style.display = "none";
+      });
     });
-    chain.then(function(){
-      renderCategorySelect(); renderGallery();
-      if (failed === 0){
-        statusEl.style.color = "";
-        statusEl.textContent = "Added " + succeeded + " photo" + (succeeded===1?"":"s") + " to \"" + category + "\".";
-        setTimeout(function(){ statusEl.textContent = ""; }, 3000);
-      } else {
-        statusEl.style.color = "var(--danger)";
-        statusEl.textContent = succeeded + " of " + files.length + " uploaded — " + failed + " failed: " + lastError;
+
+    return {
+      load: function(){
+        return api(opts.apiPath).catch(function(){ return null; }).then(function(res){
+          if (res && Array.isArray(res)) photos = res;
+        });
+      },
+      applyAdminState: function(admin){
+        byId(ids.toolbar).classList.toggle("show", admin);
+      },
+      renderAll: function(){
+        renderCategorySelect();
+        renderGallery();
       }
-      e.target.value = "";
-      document.getElementById("newCategoryInput").value = "";
-      document.getElementById("newCategoryInput").style.display = "none";
-    });
+    };
+  }
+
+  var mainGallery = createGallery({
+    apiPath: "/api/photos",
+    ids: {
+      toolbar: "galleryToolbar", categorySelect: "categorySelect", newCategoryInput: "newCategoryInput",
+      fileInput: "fileInput", uploadStatus: "uploadStatus", filterPills: "filterPills", grid: "galleryGrid",
+      viewMoreWrap: "viewMoreWrap", viewMoreBtn: "viewMoreBtn"
+    },
+    emptyAdminText: "No creations yet — use \"Add photos\" above to upload your first ones.",
+    emptyVisitorText: "No creations yet — check back soon."
+  });
+
+  var eventGallery = createGallery({
+    apiPath: "/api/event-photos",
+    ids: {
+      toolbar: "eventGalleryToolbar", categorySelect: "eventCategorySelect", newCategoryInput: "eventNewCategoryInput",
+      fileInput: "eventFileInput", uploadStatus: "eventUploadStatus", filterPills: "eventFilterPills", grid: "eventGalleryGrid",
+      viewMoreWrap: "eventViewMoreWrap", viewMoreBtn: "eventViewMoreBtn"
+    },
+    frameClass: "event-photo-frame",
+    gridClass: "event-gallery-grid",
+    emptyAdminText: "No events yet — use \"Add photos\" above to upload your first ones.",
+    emptyVisitorText: "No events yet — check back soon."
   });
 
   // ---------- Contact ----------
@@ -1040,8 +1234,10 @@
     renderHero();
     renderPortrait();
     renderAbout();
-    renderCategorySelect();
-    renderGallery();
+    renderGallerySubtitle();
+    mainGallery.renderAll();
+    renderEventSubtitle();
+    eventGallery.renderAll();
     renderContact();
     document.querySelectorAll(".reveal").forEach(observeReveal);
   }

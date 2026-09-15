@@ -1,3 +1,3 @@
 const { createPhotoGalleryHandler } = require("../lib/photoGallery");
 
-module.exports = createPhotoGalleryHandler("photos");
+module.exports = createPhotoGalleryHandler("eventPhotos");
