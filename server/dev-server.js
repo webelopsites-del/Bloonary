@@ -29,6 +29,10 @@ app.put("/api/event-photos", mount("../api/event-photos"));
 app.delete("/api/event-photos", mount("../api/event-photos"));
 
 app.use("/uploads", express.static(path.join(process.cwd(), "data", "uploads")));
+app.use("/assets", express.static(path.join(process.cwd(), "assets")));
+app.use("/favicon", express.static(path.join(process.cwd(), "favicon")));
+app.get("/favicon.ico", (req, res) => res.sendFile(path.join(process.cwd(), "favicon.ico")));
+app.get("/site.webmanifest", (req, res) => res.sendFile(path.join(process.cwd(), "site.webmanifest")));
 app.get("/", (req, res) => res.sendFile(path.join(process.cwd(), "index.html")));
 
 const PORT = process.env.PORT || 3000;

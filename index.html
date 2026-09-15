@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bloonery</title>
-<link rel="icon" href="/favicon.ico">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/favicon-180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#5C0A2D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Baloo+2:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -245,7 +250,17 @@
   }
   .hover-caption .cap-price{font-size:12px;letter-spacing:.02em;text-transform:none;margin-top:4px;font-weight:700;color:var(--accent);}
   .admin-on .photo-frame{cursor:pointer;}
-  .admin-on #gallerySubtitle{cursor:pointer;border-bottom:1px dashed var(--line);display:inline-block;}
+
+  .subtitle-row{display:inline-flex;align-items:center;gap:8px;}
+  .edit-icon-btn{
+    display:none;flex:none;align-items:center;justify-content:center;
+    width:26px;height:26px;border-radius:50%;
+    background:#fff;border:1.5px solid var(--accent);color:var(--accent-deep);
+    font-size:12px;cursor:pointer;padding:0;
+    transition:background .2s var(--ease),color .2s var(--ease),transform .2s var(--ease);
+  }
+  .edit-icon-btn:hover{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff;transform:scale(1.1);}
+  .admin-on .edit-icon-btn{display:inline-flex;}
 
   .photo-delete{
     position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
@@ -268,7 +283,6 @@
   @media (max-width:420px){ .event-gallery-grid{gap:12px;} }
 
   #eventSubtitle.placeholder{color:var(--ink-faint);font-style:italic;}
-  .admin-on #eventSubtitle{cursor:pointer;border-bottom:1px dashed var(--line);display:inline-block;min-height:1.4em;}
 
   /* Lightbox */
   .lightbox{position:fixed;inset:0;background:rgba(43,12,26,.92);display:none;align-items:center;justify-content:center;z-index:200;padding:40px;
@@ -346,12 +360,15 @@
   .modal-overlay{position:fixed;inset:0;background:rgba(43,12,26,.5);display:none;align-items:center;justify-content:center;z-index:300;}
   .modal-overlay.open{display:flex;}
   .modal{background:var(--card);border-radius:14px;padding:28px;width:290px;box-shadow:0 24px 60px rgba(0,0,0,.3);}
+  .modal.modal-wide{width:360px;max-width:88vw;}
   .modal h3{font-size:17px;margin-bottom:16px;color:var(--accent-deep);}
-  .modal input{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;font-size:14px;margin-bottom:12px;font-family:inherit;}
+  .modal input, .modal textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;font-size:14px;margin-bottom:12px;font-family:inherit;color:var(--ink);}
+  .modal textarea{resize:vertical;min-height:90px;line-height:1.6;}
+  .modal input:focus, .modal textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(236,111,166,.18);}
   .modal-err{color:var(--danger);font-size:12px;margin:-6px 0 12px;min-height:14px;}
+  .modal-hint{color:var(--ink-faint);font-size:11.5px;line-height:1.5;margin:-8px 0 12px;}
   .modal-actions{display:flex;gap:8px;}
   .modal-actions .btn{flex:1;justify-content:center;}
-  .hint{color:var(--ink-faint);font-size:11px;margin-top:16px;line-height:1.6;}
 
   /* Scroll-reveal */
   .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
@@ -384,11 +401,13 @@
     .hero-inner{grid-template-columns:1fr;}
     .hero-right{justify-self:stretch;width:100%;max-width:440px;margin:20px auto 0;}
     #about .about-grid, .contact-grid{grid-template-columns:1fr;}
+    #about .about-portrait{max-width:260px;width:100%;margin:0 auto;}
     .nav-inner{padding:14px 20px;}
     section{padding:56px 20px;}
   }
 
   @media (max-width:420px){
+    #about .about-portrait{max-width:210px;}
     .brand-name{font-size:19px;}
     section{padding:44px 16px;}
     .modal{width:min(290px,86vw);}
@@ -469,7 +488,10 @@
     <div class="section-head reveal">
       <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Gallery</span><div class="flourish-line"></div></div>
       <h2>Our Creations</h2>
-      <p id="gallerySubtitle"></p>
+      <div class="subtitle-row">
+        <p id="gallerySubtitle"></p>
+        <button class="edit-icon-btn" id="editGallerySubtitleBtn" type="button" title="Edit description">✎</button>
+      </div>
     </div>
 
     <div class="gallery-toolbar" id="galleryToolbar">
@@ -495,7 +517,10 @@
     <div class="section-head reveal">
       <div class="flourish-row"><div class="flourish-line"></div><span class="eyebrow">Events</span><div class="flourish-line"></div></div>
       <h2>Events &amp; Installations</h2>
-      <p id="eventSubtitle"></p>
+      <div class="subtitle-row">
+        <p id="eventSubtitle"></p>
+        <button class="edit-icon-btn" id="editEventSubtitleBtn" type="button" title="Edit description">✎</button>
+      </div>
     </div>
 
     <div class="gallery-toolbar" id="eventGalleryToolbar">
@@ -587,7 +612,6 @@
       <button class="btn ghost small" id="cancelSignin">Cancel</button>
       <button class="btn small" id="submitSignin">Continue</button>
     </div>
-    <p class="hint">Verified by the server — the password itself is never sent to or stored in the page.</p>
   </div>
 </div>
 
@@ -611,6 +635,18 @@
     <div class="modal-actions">
       <button class="btn ghost small" id="cancelPriceEdit">Cancel</button>
       <button class="btn small" id="savePriceEdit">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="descriptionEditModal">
+  <div class="modal modal-wide">
+    <h3 id="descriptionEditTitle">Edit description</h3>
+    <p class="modal-hint" id="descriptionEditHint"></p>
+    <textarea id="descriptionEditArea" rows="4" maxlength="500" placeholder="Add a short description…"></textarea>
+    <div class="modal-actions">
+      <button class="btn ghost small" id="cancelDescriptionEdit">Cancel</button>
+      <button class="btn small" id="saveDescriptionEdit">Save</button>
     </div>
   </div>
 </div>
@@ -886,6 +922,31 @@
     if (callback) callback(value);
   });
 
+  // ---------- Description edit modal (shared by both gallery subtitles) ----------
+  var descriptionModalCallback = null;
+  function openDescriptionModal(title, hint, currentText, onSave){
+    descriptionModalCallback = onSave;
+    document.getElementById("descriptionEditTitle").textContent = title;
+    document.getElementById("descriptionEditHint").textContent = hint || "";
+    document.getElementById("descriptionEditArea").value = currentText || "";
+    document.getElementById("descriptionEditModal").classList.add("open");
+    setTimeout(function(){ document.getElementById("descriptionEditArea").focus(); }, 30);
+  }
+  function closeDescriptionModal(){
+    document.getElementById("descriptionEditModal").classList.remove("open");
+    descriptionModalCallback = null;
+  }
+  document.getElementById("cancelDescriptionEdit").addEventListener("click", closeDescriptionModal);
+  document.getElementById("descriptionEditModal").addEventListener("click", function(e){
+    if (e.target.id === "descriptionEditModal") closeDescriptionModal();
+  });
+  document.getElementById("saveDescriptionEdit").addEventListener("click", function(){
+    var value = document.getElementById("descriptionEditArea").value.trim();
+    var callback = descriptionModalCallback;
+    closeDescriptionModal();
+    if (callback) callback(value);
+  });
+
   document.getElementById("cancelSignin").addEventListener("click", function(){
     document.getElementById("signinModal").classList.remove("open");
   });
@@ -1105,15 +1166,12 @@
   function renderGallerySubtitle(){
     document.getElementById("gallerySubtitle").textContent = gallerySubtitle;
   }
-  document.getElementById("gallerySubtitle").addEventListener("click", function(){
-    if (!isAdmin) return;
-    var next = window.prompt("Edit the text under \"Our Creations\":", gallerySubtitle);
-    if (next === null) return;
-    next = next.trim();
-    if (!next) return;
-    gallerySubtitle = next;
-    saveGallerySubtitle().catch(function(){});
-    renderGallerySubtitle();
+  document.getElementById("editGallerySubtitleBtn").addEventListener("click", function(){
+    openDescriptionModal("Edit description", "Shown under “Our Creations”.", gallerySubtitle, function(next){
+      gallerySubtitle = next;
+      saveGallerySubtitle().catch(function(){});
+      renderGallerySubtitle();
+    });
   });
 
   function renderEventSubtitle(){
@@ -1123,7 +1181,7 @@
       el.classList.remove("placeholder");
       el.style.display = "";
     } else if (isAdmin){
-      el.textContent = "Click to add a description…";
+      el.textContent = "No description added yet.";
       el.classList.add("placeholder");
       el.style.display = "";
     } else {
@@ -1131,13 +1189,12 @@
       el.style.display = "none";
     }
   }
-  document.getElementById("eventSubtitle").addEventListener("click", function(){
-    if (!isAdmin) return;
-    var next = window.prompt("Edit the text under \"Events & Installations\" (leave blank to remove):", eventSubtitle);
-    if (next === null) return;
-    eventSubtitle = next.trim();
-    saveEventSubtitle().catch(function(){});
-    renderEventSubtitle();
+  document.getElementById("editEventSubtitleBtn").addEventListener("click", function(){
+    openDescriptionModal("Edit description", "Shown under “Events & Installations” — leave blank to remove.", eventSubtitle, function(next){
+      eventSubtitle = next;
+      saveEventSubtitle().catch(function(){});
+      renderEventSubtitle();
+    });
   });
 
   // ---------- Gallery (shared factory: powers both the main and events galleries) ----------
