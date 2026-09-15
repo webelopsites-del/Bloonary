@@ -403,9 +403,14 @@
     .hero-right{justify-self:stretch;width:100%;max-width:440px;margin:20px auto 0;}
     #about .about-grid, .contact-grid{grid-template-columns:1fr;}
     #about .about-grid{gap:22px;}
-    #about .about-portrait{max-width:260px;width:100%;margin:0;}
-    .portrait-image-well{padding:16px;}
+    #about .about-portrait{
+      max-width:260px;width:100%;margin:0;flex-direction:column;
+      aspect-ratio:auto;border:none;background:none;overflow:visible;
+    }
+    #about .about-portrait img{position:static;width:100%;height:auto;object-fit:contain;border-radius:var(--radius);}
+    .portrait-image-well{position:static;padding:0;width:100%;}
     .portrait-image-well svg{max-width:78%;}
+    #about .portrait-upload-btn{position:static;margin-top:10px;}
     .nav-inner{padding:14px 20px;}
     section{padding:56px 20px;}
   }
