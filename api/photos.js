@@ -6,6 +6,7 @@ const { withHandler } = require("../lib/handler");
 
 const MAX_CAPTION_LEN = 200;
 const MAX_CATEGORY_LEN = 60;
+const MAX_PRICE_LEN = 40;
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 const UNCATEGORIZED = "Uncategorized";
 const DATA_URL_RE = /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/;
@@ -60,12 +61,30 @@ module.exports = withHandler(async (req, res) => {
       pathname: saved.pathname,
       caption: sanitizeText(body.caption, MAX_CAPTION_LEN, "Untitled"),
       category: sanitizeText(body.category, MAX_CATEGORY_LEN, UNCATEGORIZED),
+      price: sanitizeText(body.price, MAX_PRICE_LEN, ""),
     };
 
     const photos = await store.get("photos", []);
     photos.push(photo);
     await store.set("photos", photos);
     return res.end(JSON.stringify(photo));
+  }
+
+  if (req.method === "PUT") {
+    if (!auth.requireAdmin(req, res)) return;
+    const body = req.body || {};
+    const id = typeof body.id === "string" ? body.id : getQueryId(req);
+    const photos = await store.get("photos", []);
+    const target = photos.find((p) => p.id === id);
+    if (!target) {
+      res.statusCode = 404;
+      return res.end(JSON.stringify({ error: "Not found." }));
+    }
+    if (typeof body.price === "string") {
+      target.price = sanitizeText(body.price, MAX_PRICE_LEN, "");
+    }
+    await store.set("photos", photos);
+    return res.end(JSON.stringify(target));
   }
 
   if (req.method === "DELETE") {

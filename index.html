@@ -179,15 +179,16 @@
     transition:transform .35s var(--ease),box-shadow .35s var(--ease);}
   .gallery-grid .photo-mount:hover{transform:translateY(-6px);box-shadow:0 22px 40px -16px rgba(92,27,59,.32);}
   .photo-frame{position:relative;overflow:hidden;}
-  .photo-frame img{width:100%;display:block;aspect-ratio:4/3;object-fit:cover;background:var(--card);transition:transform .5s var(--ease);}
+  .photo-frame img{width:100%;display:block;aspect-ratio:3/4;object-fit:contain;background:var(--card);transition:transform .5s var(--ease);}
   .photo-frame:hover img{transform:scale(1.08);}
   .hover-caption{
     position:absolute;left:0;right:0;bottom:0;
     background:linear-gradient(to top, rgba(74,20,45,.75), rgba(74,20,45,0));
     color:#fff;padding:22px 14px 12px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
-    opacity:0;transition:opacity .2s;pointer-events:none;
+    pointer-events:none;
   }
-  .photo-frame:hover .hover-caption, .photo-frame.touched .hover-caption{opacity:1;}
+  .hover-caption .cap-price{font-size:12px;letter-spacing:.02em;text-transform:none;margin-top:4px;font-weight:700;color:var(--accent);}
+  .admin-on .photo-frame{cursor:pointer;}
 
   .photo-delete{
     position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;
@@ -215,16 +216,9 @@
 
   /* Contact — centered header + horizontal icon row */
   #contact{background:var(--cream-2);}
-  .contact-edit-btn{display:block;margin:22px auto 0;width:fit-content;}
-  .contact-edit-form{display:none;flex-direction:column;gap:10px;max-width:380px;margin:16px auto 0;
-    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
-    box-shadow:0 10px 30px -14px rgba(92,27,59,.15);}
-  .contact-edit-form.open{display:flex;}
-  .contact-edit-form input{padding:10px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit;}
-  .contact-edit-actions{display:flex;gap:8px;margin-top:4px;}
 
   .contact-rows-wrap{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:34px 0;}
-  .contact-row{display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 28px;position:relative;max-width:150px;}
+  .contact-row{display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 28px;position:relative;max-width:150px;text-decoration:none;cursor:pointer;}
   .contact-row:not(:first-child)::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:1px;background:var(--line);}
   .contact-icon{
     width:52px;height:52px;border-radius:50%;background:#fff;color:var(--accent-deep);border:1.5px solid var(--accent);
@@ -232,7 +226,8 @@
     transition:transform .3s var(--ease),background .3s var(--ease);
   }
   .contact-row:hover .contact-icon{transform:scale(1.1) rotate(-6deg);background:var(--accent-deep);color:#fff;border-color:var(--accent-deep);}
-  .contact-row .val{font-size:13px;color:var(--ink);text-align:center;line-height:1.4;word-break:break-word;}
+  .contact-row .val{font-size:13px;color:var(--ink);text-align:center;line-height:1.4;word-break:break-word;transition:color .2s var(--ease);}
+  .contact-row:hover .val{color:var(--accent-deep);}
   @media (max-width:640px){
     .contact-row:not(:first-child)::before{display:none;}
     .contact-row{padding:0 14px;}
@@ -244,12 +239,21 @@
   .footer-logo{width:30px;height:30px;object-fit:contain;filter:brightness(0) invert(1);}
   .footer-brand{font-family:'Baloo 2',sans-serif;font-size:20px;font-weight:800;}
   .footer-copy{font-size:11.5px;opacity:.85;}
-  .footer-social{display:flex;gap:12px;}
-  .footer-social a{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;text-decoration:none;}
   .footer-credit-row{max-width:1200px;margin:14px auto 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.15);text-align:center;}
   .footer-credit{color:rgba(255,255,255,.75);text-decoration:none;font-size:11.5px;letter-spacing:.02em;transition:color .2s var(--ease);}
   .footer-credit:hover{color:#fff;}
   .footer-credit strong{font-weight:700;}
+
+  /* Floating WhatsApp button */
+  .whatsapp-float{
+    position:fixed;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;
+    background:#25D366;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:400;transition:transform .2s var(--ease);
+  }
+  .whatsapp-float:hover{transform:scale(1.08);}
+  @media (max-width:640px){
+    .whatsapp-float{right:14px;bottom:14px;width:50px;height:50px;}
+  }
 
   /* Modal */
   .modal-overlay{position:fixed;inset:0;background:rgba(43,12,26,.5);display:none;align-items:center;justify-content:center;z-index:300;}
@@ -424,20 +428,6 @@
       <h2>Let's Create <span class="italic-accent">Something Beautiful</span></h2>
     </div>
     <div id="contactRows" class="contact-rows-wrap reveal"></div>
-    <div style="text-align:center;">
-      <div class="btn ghost small contact-edit-btn" id="editContactBtn" style="display:none;">Edit contact info</div>
-      <div class="contact-edit-form" id="contactEditForm">
-        <input type="text" id="editInstagram" placeholder="Instagram handle (e.g. @yourname)">
-        <input type="text" id="editPhone" placeholder="Phone number">
-        <input type="text" id="editWhatsapp" placeholder="WhatsApp number">
-        <input type="text" id="editEmail" placeholder="Email address">
-        <input type="text" id="editLocation" placeholder="Location">
-        <div class="contact-edit-actions">
-          <button class="btn small" id="saveContactBtn">Save</button>
-          <button class="btn ghost small" id="cancelContactBtn">Cancel</button>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -448,11 +438,6 @@
       <div class="footer-brand" id="footerBrand">Bloonery</div>
     </div>
     <div class="footer-copy">© <span id="year"></span> All rights reserved.</div>
-    <div class="footer-social">
-      <a href="#" id="footerEmail" title="Email">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
-      </a>
-    </div>
   </div>
   <div class="footer-credit-row">
     <a class="footer-credit" href="https://webelopsites.com" target="_blank" rel="noopener noreferrer">
@@ -506,7 +491,17 @@
   var isAdmin = false;
   var aboutText = "";
   var photos = [];
-  var contact = { phone: "", whatsapp: "", email: "", location: "", instagram: "" };
+  var contact = {
+    instagramHandle: "BlooneryUK",
+    instagramUrl: "https://www.instagram.com/reel/DZLYDV9IoLQ/?igsi=YnMxOTFmMnQ0OGlk",
+    phone: "07876 489553",
+    phoneHref: "tel:+447876489553",
+    whatsapp: "07876 489553",
+    whatsappHref: "https://wa.me/447876489553",
+    email: "blooneryuk@gmail.com",
+    location: "Stamford Hill, London",
+    locationHref: "https://www.google.com/maps/search/?api=1&query=Stamford+Hill%2C+London"
+  };
   var heroImages = [null, null, null];
   var portraitImage = null;
   var brand = { name: "Bloonery", sub: "Making every moment pop" };
@@ -589,7 +584,6 @@
       isAdmin = !!(results[0] && results[0].isAdmin);
       if (results[1]){
         aboutText = results[1].about || "";
-        contact = results[1].contact || contact;
         heroImages = [results[1].hero1 || null, results[1].hero2 || null, results[1].hero3 || null];
         portraitImage = results[1].portrait || null;
         brand = results[1].brand || brand;
@@ -599,7 +593,6 @@
     });
   }
   function saveAbout(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ about: aboutText }) }); }
-  function saveContact(){ return api("/api/content", { method: "PUT", body: JSON.stringify({ contact: contact }) }); }
   function saveHeroSlot(index, dataUrl){
     var key = "hero" + (index + 1);
     var body = {}; body[key] = dataUrl;
@@ -630,7 +623,6 @@
     document.getElementById("brandTrigger").title = isAdmin ? "Edit site name" : "Owner access";
     document.getElementById("galleryToolbar").classList.toggle("show", isAdmin);
     document.getElementById("portraitUploadBtn").style.display = isAdmin ? "inline-flex" : "none";
-    document.getElementById("editContactBtn").style.display = isAdmin ? "inline-block" : "none";
   }
 
   function openSigninModal(){
@@ -900,16 +892,14 @@
       frame.appendChild(img);
       var cap = document.createElement("div");
       cap.className = "hover-caption";
-      cap.textContent = p.category || UNCATEGORIZED;
+      cap.innerHTML = '<div class="cap-category">' + escapeHtml(p.category || UNCATEGORIZED) + '</div>' +
+        (p.price ? '<div class="cap-price">' + escapeHtml(p.price) + '</div>' : "");
       frame.appendChild(cap);
       frame.addEventListener("click", function(e){
-        if (window.matchMedia && window.matchMedia("(hover: none)").matches){
-          if (!frame.classList.contains("touched")){
-            e.stopPropagation();
-            document.querySelectorAll(".photo-frame.touched").forEach(function(f){ f.classList.remove("touched"); });
-            frame.classList.add("touched");
-            return;
-          }
+        if (isAdmin){
+          e.stopPropagation();
+          promptPrice(p);
+          return;
         }
         openLightbox(p);
       });
@@ -938,8 +928,19 @@
 
   function openLightbox(p){
     document.getElementById("lightboxImg").src = p.url;
-    document.getElementById("lightboxCap").innerHTML = '<span class="cat">' + escapeHtml(p.category || UNCATEGORIZED) + '</span>';
+    document.getElementById("lightboxCap").innerHTML = '<span class="cat">' + escapeHtml(p.category || UNCATEGORIZED) + '</span>' +
+      (p.price ? ' &middot; ' + escapeHtml(p.price) : "");
     document.getElementById("lightbox").classList.add("open");
+  }
+
+  function promptPrice(p){
+    var next = window.prompt("Set the price shown on this photo (leave blank to remove):", p.price || "");
+    if (next === null) return;
+    next = next.trim();
+    api("/api/photos", { method: "PUT", body: JSON.stringify({ id: p.id, price: next }) }).then(function(res){
+      p.price = res.price || "";
+      renderGallery();
+    }).catch(function(){});
   }
   document.getElementById("lightboxClose").addEventListener("click", function(){ document.getElementById("lightbox").classList.remove("open"); });
   document.getElementById("lightbox").addEventListener("click", function(e){ if (e.target.id === "lightbox") document.getElementById("lightbox").classList.remove("open"); });
@@ -1021,39 +1022,16 @@
   function renderContact(){
     var rows = document.getElementById("contactRows");
     rows.innerHTML =
-      row(iconInsta(), contact.instagram) +
-      row(iconPhone(), contact.phone) +
-      row(iconWhatsapp(), contact.whatsapp) +
-      row(iconMail(), contact.email) +
-      row(iconPin(), contact.location);
-    document.getElementById("footerEmail").href = "mailto:" + contact.email;
+      row(iconInsta(), contact.instagramHandle, contact.instagramUrl, true) +
+      row(iconPhone(), contact.phone, contact.phoneHref, false) +
+      row(iconWhatsapp(), contact.whatsapp, contact.whatsappHref, true) +
+      row(iconMail(), contact.email, "mailto:" + contact.email, false) +
+      row(iconPin(), contact.location, contact.locationHref, true);
   }
-  function row(icon, value){
-    return '<div class="contact-row"><div class="contact-icon">' + icon + '</div><div class="val">' + escapeHtml(value || "—") + '</div></div>';
+  function row(icon, value, href, newTab){
+    var target = newTab ? ' target="_blank" rel="noopener noreferrer"' : "";
+    return '<a class="contact-row" href="' + escapeHtml(href) + '"' + target + '><div class="contact-icon">' + icon + '</div><div class="val">' + escapeHtml(value || "—") + '</div></a>';
   }
-  document.getElementById("editContactBtn").addEventListener("click", function(){
-    document.getElementById("editInstagram").value = contact.instagram || "";
-    document.getElementById("editPhone").value = contact.phone || "";
-    document.getElementById("editWhatsapp").value = contact.whatsapp || "";
-    document.getElementById("editEmail").value = contact.email || "";
-    document.getElementById("editLocation").value = contact.location || "";
-    document.getElementById("contactEditForm").classList.add("open");
-  });
-  document.getElementById("cancelContactBtn").addEventListener("click", function(){
-    document.getElementById("contactEditForm").classList.remove("open");
-  });
-  document.getElementById("saveContactBtn").addEventListener("click", function(){
-    contact = {
-      instagram: document.getElementById("editInstagram").value.trim(),
-      phone: document.getElementById("editPhone").value.trim(),
-      whatsapp: document.getElementById("editWhatsapp").value.trim(),
-      email: document.getElementById("editEmail").value.trim(),
-      location: document.getElementById("editLocation").value.trim()
-    };
-    saveContact().catch(function(){});
-    renderContact();
-    document.getElementById("contactEditForm").classList.remove("open");
-  });
 
   // ---------- Init ----------
   function renderAll(){
@@ -1070,5 +1048,9 @@
   loadAll();
 })();
 </script>
+
+<a class="whatsapp-float" href="https://wa.me/447876489553" target="_blank" rel="noopener noreferrer" title="Message us on WhatsApp" aria-label="Message us on WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2c-5.52 0-10 4.48-10 10 0 1.76.46 3.48 1.34 5L2 22l5.14-1.35A9.96 9.96 0 0 0 12.04 22c5.52 0 10-4.48 10-10s-4.48-10-10-10zm0 18.15a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.05.8.82-2.97-.2-.31a8.19 8.19 0 1 1 6.91 3.81zm4.5-6.13c-.25-.12-1.45-.72-1.68-.8-.23-.08-.39-.12-.56.12-.16.25-.64.8-.78.96-.14.16-.29.18-.54.06-.25-.12-1.04-.38-1.99-1.22-.73-.65-1.23-1.46-1.37-1.71-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.23.25-.86.84-.86 2.04 0 1.2.88 2.36 1 2.53.12.16 1.74 2.66 4.22 3.72.59.26 1.05.41 1.41.52.59.19 1.13.16 1.55.1.47-.07 1.45-.59 1.66-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.47-.28z"/></svg>
+</a>
 </body>
 </html>

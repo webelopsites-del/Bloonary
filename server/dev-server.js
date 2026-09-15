@@ -21,6 +21,7 @@ app.get("/api/content", mount("../api/content"));
 app.put("/api/content", mount("../api/content"));
 app.get("/api/photos", mount("../api/photos"));
 app.post("/api/photos", mount("../api/photos"));
+app.put("/api/photos", mount("../api/photos"));
 app.delete("/api/photos", mount("../api/photos"));
 
 app.use("/uploads", express.static(path.join(process.cwd(), "data", "uploads")));
