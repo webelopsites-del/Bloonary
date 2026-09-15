@@ -604,6 +604,17 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="priceEditModal">
+  <div class="modal">
+    <h3>Add price:</h3>
+    <input type="text" id="priceInput" placeholder="e.g. From £150" maxlength="40">
+    <div class="modal-actions">
+      <button class="btn ghost small" id="cancelPriceEdit">Cancel</button>
+      <button class="btn small" id="savePriceEdit">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -849,6 +860,32 @@
       document.getElementById("brandErr").textContent = err.message || "Couldn't save.";
     }).then(function(){ btn.disabled = false; });
   });
+  // ---------- Price edit modal (shared by both galleries) ----------
+  var priceModalCallback = null;
+  function openPriceModal(currentPrice, onSave){
+    priceModalCallback = onSave;
+    document.getElementById("priceInput").value = currentPrice || "";
+    document.getElementById("priceEditModal").classList.add("open");
+    setTimeout(function(){ document.getElementById("priceInput").focus(); }, 30);
+  }
+  function closePriceModal(){
+    document.getElementById("priceEditModal").classList.remove("open");
+    priceModalCallback = null;
+  }
+  document.getElementById("cancelPriceEdit").addEventListener("click", closePriceModal);
+  document.getElementById("priceEditModal").addEventListener("click", function(e){
+    if (e.target.id === "priceEditModal") closePriceModal();
+  });
+  document.getElementById("priceInput").addEventListener("keydown", function(e){
+    if (e.key === "Enter") document.getElementById("savePriceEdit").click();
+  });
+  document.getElementById("savePriceEdit").addEventListener("click", function(){
+    var value = document.getElementById("priceInput").value.trim();
+    var callback = priceModalCallback;
+    closePriceModal();
+    if (callback) callback(value);
+  });
+
   document.getElementById("cancelSignin").addEventListener("click", function(){
     document.getElementById("signinModal").classList.remove("open");
   });
@@ -1159,13 +1196,12 @@
       });
     }
     function promptPrice(p){
-      var next = window.prompt("Set the price shown on this photo (leave blank to remove):", p.price || "");
-      if (next === null) return;
-      next = next.trim();
-      api(opts.apiPath, { method: "PUT", body: JSON.stringify({ id: p.id, price: next }) }).then(function(res){
-        p.price = res.price || "";
-        renderGallery();
-      }).catch(function(){});
+      openPriceModal(p.price, function(next){
+        api(opts.apiPath, { method: "PUT", body: JSON.stringify({ id: p.id, price: next }) }).then(function(res){
+          p.price = res.price || "";
+          renderGallery();
+        }).catch(function(){});
+      });
     }
     function renderGallery(){
       renderFilterPills();
