@@ -1416,8 +1416,15 @@
     });
 
     return {
+
       load: function(){
-        return api(opts.apiPath).catch(function(){ return null; }).then(function(res){
+        function attempt(n){
+          return api(opts.apiPath).catch(function(){
+            if (n >= 3) return null;
+            return new Promise(function(r){ setTimeout(r, 600 * (n + 1)); }).then(function(){ return attempt(n + 1); });
+          });
+        }
+        return attempt(0).then(function(res){
           if (res && Array.isArray(res)) photos = res;
         });
       },
