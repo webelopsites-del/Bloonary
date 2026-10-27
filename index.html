@@ -365,7 +365,7 @@
   #contact{background:var(--cream-2);}
 
   .contact-rows-wrap{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:34px 0;}
-  .contact-row{display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 28px;position:relative;max-width:150px;text-decoration:none;cursor:pointer;}
+  .contact-row{display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 18px;position:relative;max-width:150px;text-decoration:none;cursor:pointer;}
   .contact-row:not(:first-child)::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:1px;background:var(--line);}
   .contact-icon{
     width:52px;height:52px;border-radius:50%;background:#fff;color:var(--accent-deep);border:1.5px solid var(--accent);
@@ -375,6 +375,9 @@
   .contact-row:hover .contact-icon{transform:scale(1.1) rotate(-6deg);background:var(--accent-deep);color:#fff;border-color:var(--accent-deep);}
   .contact-row .val{font-size:13px;color:var(--ink);text-align:center;line-height:1.4;word-break:break-word;transition:color .2s var(--ease);}
   .contact-row:hover .val{color:var(--accent-deep);}
+  .contact-row .val {
+  white-space: nowrap;
+}
   @media (max-width:640px){
     .contact-row:not(:first-child)::before{display:none;}
     .contact-row{padding:0 14px;}
@@ -719,7 +722,7 @@
   var aboutText = "";
   var contact = {
     instagramHandle: "BlooneryUK",
-    instagramUrl: "https://www.instagram.com/reel/DZLYDV9IoLQ/?igsi=YnMxOTFmMnQ0OGlk",
+    instagramUrl: "https://www.instagram.com/bloonery.co.uk?utm_source=qr&dlrf=YjE4eHJkbTRoOWY3",
     phone: "07876 489553",
     phoneHref: "tel:+447876489553",
     sms: "07876 489553",
