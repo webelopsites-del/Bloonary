@@ -17,6 +17,20 @@ const MAX_GALLERY_SUBTITLE_LEN = 200;
 const MAX_EVENT_SUBTITLE_LEN = 500;
 const DATA_URL_RE = /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/;
 
+const MAX_SUBTITLE_LINES = 3;
+
+// Keeps up to three non-empty, trimmed lines, joined with newlines.
+function sanitizeLines(s, max) {
+  return sanitizeText(s, max * 2)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, MAX_SUBTITLE_LINES)
+    .join("\n")
+    .slice(0, max)
+    .trim();
+}
+
 function sanitizeText(s, max) {
   if (typeof s !== "string") return "";
   return s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "").slice(0, max);
@@ -70,12 +84,12 @@ module.exports = withHandler(async (req, res) => {
     }
 
     if (typeof body.gallerySubtitle === "string") {
-      const subtitle = sanitizeText(body.gallerySubtitle, MAX_GALLERY_SUBTITLE_LEN).trim();
+      const subtitle = sanitizeLines(body.gallerySubtitle, MAX_GALLERY_SUBTITLE_LEN);
       await store.set("gallerySubtitle", subtitle || DEFAULT_GALLERY_SUBTITLE);
     }
 
     if (typeof body.eventSubtitle === "string") {
-      await store.set("eventSubtitle", sanitizeText(body.eventSubtitle, MAX_EVENT_SUBTITLE_LEN).trim());
+      await store.set("eventSubtitle", sanitizeLines(body.eventSubtitle, MAX_EVENT_SUBTITLE_LEN));
     }
 
     if (body.contact && typeof body.contact === "object") {
