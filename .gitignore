@@ -1,0 +1,17 @@
+# Secrets — never commit (password hash, JWT secret, Supabase keys)
+.env
+.env.*
+!.env.example
+
+# Local development content and uploads (created by npm run dev)
+data/
+
+# Dependencies
+node_modules/
+
+# Vercel CLI local project link
+.vercel/
+
+# OS / editor clutter
+.DS_Store
+Thumbs.db
