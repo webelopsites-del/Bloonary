@@ -238,6 +238,10 @@
   .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);text-transform:uppercase;font-weight:600;}
   .section-head h2{font-size:clamp(26px,4vw,34px);margin-bottom:8px;color:var(--accent-deep);}
   .section-head p{color:var(--ink-muted);font-size:13.5px;}
+  #gallerySubtitle,#eventSubtitle{white-space:pre-line;text-align:center;}
+  .description-lines{display:flex;flex-direction:column;gap:6px;margin-bottom:6px;}
+  .description-lines label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-top:4px;}
+  .modal .description-lines input{margin-bottom:2px;}
 
   /* About */
   #about{background:var(--blue-bg);position:relative;overflow:hidden;}
@@ -702,7 +706,14 @@
   <div class="modal modal-wide">
     <h3 id="descriptionEditTitle">Edit description</h3>
     <p class="modal-hint" id="descriptionEditHint"></p>
-    <textarea id="descriptionEditArea" rows="4" maxlength="500" placeholder="Add a short description…"></textarea>
+    <div class="description-lines">
+      <label for="descriptionLine1">Line 1</label>
+      <input type="text" id="descriptionLine1" class="description-line" maxlength="160" placeholder="First line…">
+      <label for="descriptionLine2">Line 2</label>
+      <input type="text" id="descriptionLine2" class="description-line" maxlength="160" placeholder="Second line (optional)">
+      <label for="descriptionLine3">Line 3</label>
+      <input type="text" id="descriptionLine3" class="description-line" maxlength="160" placeholder="Third line (optional)">
+    </div>
     <div class="modal-actions">
       <button class="btn ghost small" id="cancelDescriptionEdit">Cancel</button>
       <button class="btn small" id="saveDescriptionEdit">Save</button>
@@ -987,9 +998,14 @@
     descriptionModalCallback = onSave;
     document.getElementById("descriptionEditTitle").textContent = title;
     document.getElementById("descriptionEditHint").textContent = hint || "";
-    document.getElementById("descriptionEditArea").value = currentText || "";
+    var lines = String(currentText || "").split(/\r?\n/);
+    // Anything beyond three lines is folded into the third box so nothing is lost.
+    if (lines.length > 3) lines = [lines[0], lines[1], lines.slice(2).join(" ")];
+    for (var i = 0; i < 3; i++){
+      document.getElementById("descriptionLine" + (i + 1)).value = lines[i] || "";
+    }
     document.getElementById("descriptionEditModal").classList.add("open");
-    setTimeout(function(){ document.getElementById("descriptionEditArea").focus(); }, 30);
+    setTimeout(function(){ document.getElementById("descriptionLine1").focus(); }, 30);
   }
   function closeDescriptionModal(){
     document.getElementById("descriptionEditModal").classList.remove("open");
@@ -1000,7 +1016,12 @@
     if (e.target.id === "descriptionEditModal") closeDescriptionModal();
   });
   document.getElementById("saveDescriptionEdit").addEventListener("click", function(){
-    var value = document.getElementById("descriptionEditArea").value.trim();
+    var parts = [];
+    for (var i = 1; i <= 3; i++){
+      var line = document.getElementById("descriptionLine" + i).value.trim();
+      if (line) parts.push(line);
+    }
+    var value = parts.join("\n");
     var callback = descriptionModalCallback;
     closeDescriptionModal();
     if (callback) callback(value);
